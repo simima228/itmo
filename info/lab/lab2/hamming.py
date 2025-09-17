@@ -1,4 +1,3 @@
-import itertools
 from math import log
 
 
@@ -26,6 +25,10 @@ def main():  # работает для любого полного кода хэ
         print(f'В сообщении была ошибка на {n}-ом бите, правильный вариант: {"".join(code)}')
     else:
         print('Ошибок нет')
+    for i in range(int(log(len(code) + 1, 2))):
+        code[2 ** i - 1] = '-'
+    code = ''.join(code).split('-')
+    print("Информационные биты:", ''.join(code))
 
 
 if __name__ == '__main__':
