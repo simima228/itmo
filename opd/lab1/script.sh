@@ -15,14 +15,14 @@ mkdir -p totodile5/lickilicky
 mkdir totodile5/axew
 touch totodile5/omastar
 touch totodile5/zigzagoon
-echo 'Живет  Ocean' > cherubi5/finneon
-echo 'Развитые способности  Sap\nSipper' > cherubi5/blitzle
-echo 'Живет  Cave Desert Mountain' > darumaka0
-echo 'Способности\nDark Art Synchronize Trace' > gabite1/umbreon
-echo 'Развитые способности\nJustified' > growlithe
-echo 'Способности  Torrent Hyper Cutter Shell\nArmor' > krabby6
-echo 'Ходы  Ancientpower Bind Body Slam Dive Double-Edge\nEarth Power Icy Wind Iron Defense Knock Off Mud-Slap Rollout Seismic\nToss Sleep Talk Snore Stealth Rock Water Pulse' > totodile5/omastar
-echo 'Способности\nGrowl Tackle Tail Whip Headbutt Sand-Attack Odor Sleuth Mud Sport Pin\nMissile Covet Bestow Flail Rest Belly Drum Fling' > totodile5/zigzagoon
+echo -e 'Живет  Ocean' > cherubi5/finneon
+echo -e 'Развитые способности  Sap\nSipper' > cherubi5/blitzle
+echo -e 'Живет  Cave Desert Mountain' > darumaka0
+echo -e 'Способности\nDark Art Synchronize Trace' > gabite1/umbreon
+echo -e 'Развитые способности\nJustified' > growlithe
+echo -e 'Способности  Torrent Hyper Cutter Shell\nArmor' > krabby6
+echo -e 'Ходы  Ancientpower Bind Body Slam Dive Double-Edge\nEarth Power Icy Wind Iron Defense Knock Off Mud-Slap Rollout Seismic\nToss Sleep Talk Snore Stealth Rock Water Pulse' > totodile5/omastar
+echo -e 'Способности\nGrowl Tackle Tail Whip Headbutt Sand-Attack Odor Sleuth Mud Sport Pin\nMissile Covet Bestow Flail Rest Belly Drum Fling' > totodile5/zigzagoon
 chmod 321 cherubi5
 chmod 752 cherubi5/roselia
 chmod 537 cherubi5/sealeo
