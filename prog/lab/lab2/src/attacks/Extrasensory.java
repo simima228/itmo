@@ -17,6 +17,7 @@ public class Extrasensory extends SpecialMove {
     }
     @Override
     protected String describe(){
-        return "использует Extrasensory " + ((isFlinched) ? " и накладывает страх на" : "");
+        return "использует Extrasensory" + ((isFlinched) ? " и накладывает страх на" : "");
     }
+
 }
