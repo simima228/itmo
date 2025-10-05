@@ -25,7 +25,7 @@ def change_ad(text, index):
         return text
     result = text
     for w in repl_ads.keys():
-        if len(repl_ads[w]) > 1 and len(repl_ads[w]) >= index:
+        if len(repl_ads[w]) >= index:
             target = repl_ads[w][index - 1]
             target_end = re.search(end_pat, target).group(0)
             target_root = re.search(ad_pat, target).group(1)
@@ -36,3 +36,4 @@ def change_ad(text, index):
 
 def main(st, text):
     return change_ad(text, st)
+
