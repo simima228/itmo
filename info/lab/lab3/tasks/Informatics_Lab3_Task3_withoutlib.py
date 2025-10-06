@@ -19,7 +19,6 @@ def change_ad(text, index):
         else:
             t = i.split('-')
             base_ads.append(t[0] + '-' + re.sub(ad_pat, lambda x: x.group(1), t[1]))
-    print(ads)
     repl_ads = {}
     for i in range(len(base_ads)):
         w = base_ads[i].lower()
@@ -52,3 +51,4 @@ def change_ad(text, index):
 
 def main(st, text):
     return change_ad(text, st)
+
