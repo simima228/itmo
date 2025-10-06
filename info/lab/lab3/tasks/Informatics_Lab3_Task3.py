@@ -14,7 +14,6 @@ def change_ad(text, index):
                              if 'ADJF' in morph.parse(re.sub(p_pat, '', i))[0].tag else '' for i in text.split()]))
     if not ads:
         return text
-    print(ads)
     base_ads = []
     for i in ads:
         if '-' not in i:
@@ -54,3 +53,4 @@ def change_ad(text, index):
 
 def main(st, text):
     return change_ad(text, st)
+
