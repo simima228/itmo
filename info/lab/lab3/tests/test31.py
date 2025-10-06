@@ -2,6 +2,10 @@
 # Group = P3114
 # Date = 05.10.2025
 import unittest
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from tasks import Informatics_Lab3_Task3
 
 
@@ -44,4 +48,5 @@ class Test1(unittest.TestCase):
 
 
 if __name__ == '__main__':
+
     unittest.main()
