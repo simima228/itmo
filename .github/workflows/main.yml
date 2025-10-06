@@ -21,4 +21,4 @@ jobs:
     
     - name: Run all unit tests
       run: |
-        python -m unittest discover -s tests -v
+        python -m unittest discover -s info/lab/lab3/tests -v
