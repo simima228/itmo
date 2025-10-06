@@ -2,7 +2,7 @@
 # Group = P3114
 # Date = 05.10.2025
 import unittest
-import Informatics_Lab3_Task3
+from tasks import Informatics_Lab3_Task3
 
 
 class Test1(unittest.TestCase):
