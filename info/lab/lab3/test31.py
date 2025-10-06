@@ -29,9 +29,9 @@ class Test1(unittest.TestCase):
         self.assertEqual(result, Informatics_Lab3_Task3.main(st, text))
 
     def test4(self):
-        st = 5
-        text = 'Большой город шумел своими большими улицами.'
-        result = 'Большой город шумел своими большими улицами.'
+        st = 2
+        text = 'Сине-зеленый. сине-зеленая. синий. зеленые. синяя. зеленое. красно-желтый красная красные желтая желтые'
+        result = 'Сине-зеленая. сине-зеленая. синяя. зеленое. синяя. зеленое. красно-желтый красные красные желтые желтые'
         self.assertEqual(result, Informatics_Lab3_Task3.main(st, text))
 
     def test5(self):
