@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<title>Расписание недели</title>
+	<week>Четная</week>
+	<schedule>
+		<name>Понедельник</name>
+		<lessons>
+			<subject>Информатика</subject>
+			<type>Практика</type>
+			<teacher>Рыбаков Степан Дмитриевич</teacher>
+			<place>Кронверский пр., 49, лит. А</place>
+			<room>1338</room>
+			<startime>09:50</startime>
+			<endtime>11:20</endtime>
+		</lessons>
+		<lessons>
+			<subject>Информатика</subject>
+			<type>Практика</type>
+			<teacher>Рыбаков Степан Дмитриевич</teacher>
+			<place>Кронверский пр., 49, лит. А</place>
+			<room>1338</room>
+			<startime>11:30</startime>
+			<endtime>13:00</endtime>
+		</lessons>
+		<lessons>
+			<subject>Основы дискретной математики(базовый уровень)</subject>
+			<type>Лекция</type>
+			<teacher>Поляков Владимир Иванович</teacher>
+			<place>Кронверский пр., 49, лит. А</place>
+			<room>2433</room>
+			<startime>13:30</startime>
+			<endtime>15:00</endtime>
+		</lessons>
+		<lessons>
+			<subject>Основы дискретной математики(базовый уровень)</subject>
+			<type>Практика</type>
+			<teacher>Поляков Владимир Иванович</teacher>
+			<place>Кронверский пр., 49, лит. А</place>
+			<room>2337</room>
+			<startime>15:30</startime>
+			<endtime>17:00</endtime>
+		</lessons>
+	</schedule>
+	<schedule>
+		<name>Четверг</name>
+		<lessons>
+			<subject>Программирование</subject>
+			<type>Практика</type>
+			<teacher>Бобрусь Александр Владимирович</teacher>
+			<place>Кронверский пр., 49, лит. А</place>
+			<room>1333</room>
+			<startime>08:10</startime>
+			<endtime>09:40</endtime>
+		</lessons>
+		<lessons>
+			<subject>Программирование</subject>
+			<type>Практика</type>
+			<teacher>Бобрусь Александр Владимирович</teacher>
+			<place>Кронверский пр., 49, лит. А</place>
+			<room>1333</room>
+			<startime>09:50</startime>
+			<endtime>11:20</endtime>
+		</lessons>
+	</schedule>
+</root>
