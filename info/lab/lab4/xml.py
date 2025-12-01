@@ -1,6 +1,12 @@
 import binary
 
 
+def esc(string):
+    return string.replace('&', '&amp;').replace('<', '&lt;').replace('>',
+                                                                     '&gt;').replace("'", '&apos;').replace('"',
+                                                                                                            '&quot;')
+
+
 def dict2xml_rec(data, parent_name, current_indent="", indent='\t'):
     result = ""
     if isinstance(data, dict):
@@ -12,7 +18,7 @@ def dict2xml_rec(data, parent_name, current_indent="", indent='\t'):
         for item in data:
             result += dict2xml_rec(item, parent_name, current_indent, indent)
     else:
-        result += f"{current_indent}<{parent_name}>{str(data)}</{parent_name}>\n"
+        result += f"{current_indent}<{parent_name}>{esc(str(data))}</{parent_name}>\n"
     return result
 
 
