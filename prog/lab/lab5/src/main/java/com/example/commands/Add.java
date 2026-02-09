@@ -16,6 +16,6 @@ public class Add extends BaseCommand{
 
     public CommandStatus execute(Object obj) {
         collectionRegister.push(obj);
-        return new CommandStatus(true, "Команда вып1олнена успешно!");
+        return new CommandStatus(true, "Команда выполнена успешно!");
     }
 }
