@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>C:/Users/simim/IdeaProjects/untitled</OriginalElement>
+  <nodes>
+    <node x="181.0" y="586.0">objects.Human</node>
+    <node x="497.0" y="346.0">interfaces.GiftAble</node>
+    <node x="-7.5" y="166.0">interfaces.WalkAble</node>
+    <node x="475.5" y="526.0">exceptions.GiftException</node>
+    <node x="-88.0" y="226.0">interfaces.LookAble</node>
+    <node x="392.5" y="586.0">enums.IsWaiting</node>
+    <node x="416.5" y="406.0">interfaces.CallAble</node>
+    <node x="339.5" y="346.0">interfaces.KillAble</node>
+    <node x="375.0" y="166.0">interfaces.TalkAble</node>
+    <node x="467.5" y="226.0">objects.Place</node>
+    <node x="549.5" y="166.0">Main</node>
+    <node x="278.0" y="526.0">exceptions.KillException</node>
+    <node x="149.5" y="-14.0">enums.Time</node>
+    <node x="249.5" y="406.0">interfaces.OrderAble</node>
+    <node x="95.0" y="46.0">objects.Obj</node>
+    <node x="-58.0" y="406.0">objects.Animal</node>
+    <node x="85.5" y="226.0">objects.Entity</node>
+    <node x="5.5" y="526.0">enums.DirectionOfView</node>
+    <node x="174.0" y="346.0">interfaces.WaitAble</node>
+    <node x="-77.0" y="586.0">enums.IsAlive</node>
+    <node x="246.0" y="226.0">objects.Thing</node>
+    <node x="90.0" y="406.0">interfaces.ChopAble</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="objects.Entity" target="objects.Obj" relationship="GENERALIZATION">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="interfaces.OrderAble" target="interfaces.TalkAble" relationship="INTERFACE_GENERALIZATION">
+      <point x="0.0" y="-14.0" />
+      <point x="313.0" y="320.0" />
+      <point x="433.0" y="320.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="interfaces.CallAble" target="interfaces.TalkAble" relationship="INTERFACE_GENERALIZATION">
+      <point x="0.0" y="-14.0" />
+      <point x="473.0" y="320.0" />
+      <point x="433.0" y="320.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="objects.Place" target="objects.Obj" relationship="GENERALIZATION">
+      <point x="0.0" y="-14.0" />
+      <point x="513.0" y="140.0" />
+      <point x="133.0" y="140.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="objects.Human" target="interfaces.ChopAble" relationship="REALIZATION">
+      <point x="26.0" y="-14.0" />
+      <point x="259.0" y="500.0" />
+      <point x="313.0" y="500.0" />
+      <point x="313.0" y="460.0" />
+      <point x="153.0" y="460.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="objects.Thing" target="objects.Obj" relationship="GENERALIZATION">
+      <point x="0.0" y="-14.0" />
+      <point x="293.0" y="140.0" />
+      <point x="133.0" y="140.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="objects.Human" target="interfaces.WaitAble" relationship="REALIZATION">
+      <point x="26.0" y="-14.0" />
+      <point x="259.0" y="500.0" />
+      <point x="313.0" y="500.0" />
+      <point x="313.0" y="460.0" />
+      <point x="233.0" y="460.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="objects.Human" target="interfaces.OrderAble" relationship="REALIZATION">
+      <point x="26.0" y="-14.0" />
+      <point x="259.0" y="500.0" />
+      <point x="313.0" y="500.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="objects.Animal" target="interfaces.WalkAble" relationship="REALIZATION">
+      <point x="-25.5" y="-14.0" />
+      <point x="-32.5" y="380.0" />
+      <point x="-27.0" y="380.0" />
+      <point x="-27.0" y="300.0" />
+      <point x="53.0" y="300.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="objects.Human" target="interfaces.CallAble" relationship="REALIZATION">
+      <point x="26.0" y="-14.0" />
+      <point x="259.0" y="500.0" />
+      <point x="313.0" y="500.0" />
+      <point x="313.0" y="460.0" />
+      <point x="473.0" y="460.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="objects.Animal" target="interfaces.LookAble" relationship="REALIZATION">
+      <point x="-25.5" y="-14.0" />
+      <point x="-32.5" y="380.0" />
+      <point x="-27.0" y="380.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="objects.Human" target="interfaces.GiftAble" relationship="REALIZATION">
+      <point x="26.0" y="-14.0" />
+      <point x="259.0" y="500.0" />
+      <point x="313.0" y="500.0" />
+      <point x="313.0" y="460.0" />
+      <point x="553.0" y="460.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="objects.Human" target="objects.Animal" relationship="GENERALIZATION">
+      <point x="-26.0" y="-14.0" />
+      <point x="207.0" y="500.0" />
+      <point x="73.0" y="500.0" />
+      <point x="73.0" y="380.0" />
+      <point x="18.5" y="380.0" />
+      <point x="25.5" y="-14.0" />
+    </edge>
+    <edge source="objects.Animal" target="objects.Entity" relationship="GENERALIZATION">
+      <point x="25.5" y="-14.0" />
+      <point x="18.5" y="320.0" />
+      <point x="213.0" y="320.0" />
+      <point x="213.0" y="200.0" />
+      <point x="133.0" y="200.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="objects.Human" target="interfaces.KillAble" relationship="REALIZATION">
+      <point x="26.0" y="-14.0" />
+      <point x="259.0" y="500.0" />
+      <point x="313.0" y="500.0" />
+      <point x="313.0" y="460.0" />
+      <point x="393.0" y="460.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Compact" zoom="0.8533950617283951" showDependencies="false" x="274.5" y="300.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
