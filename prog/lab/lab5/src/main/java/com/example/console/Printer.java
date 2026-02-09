@@ -1,5 +1,6 @@
 package com.example.console;
 import com.example.commands.BaseCommand;
+import com.example.etc.CommandStatus;
 import com.example.registers.CollectionRegister;
 import com.example.console.Console;
 import com.example.registers.CommandRegister;
@@ -25,7 +26,10 @@ public class Printer {
 
     public boolean executeCommand(String tempCommand) {
         var command = commandRegister.getCommands().get(tempCommand);
-        command.execute();
+        var commandStatus = command.execute();
+        if (commandStatus.getMessage() == "ㅤ"){
+            System.exit(0);
+        }
         return true;
     }
 }

@@ -15,6 +15,7 @@ public class Main {
 
         commandRegister.register(new Help(console, commandRegister));
         commandRegister.register(new Add(console, collectionRegister));
+        commandRegister.register(new Exit());
 
         Printer printer = new Printer(console, commandRegister);
         printer.run();

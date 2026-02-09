@@ -8,4 +8,12 @@ public class CommandStatus {
         this.status = status;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public boolean getStatus(String message) {
+        return status;
+    }
+
 }
