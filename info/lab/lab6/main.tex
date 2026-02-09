@@ -1,0 +1,29 @@
+\documentclass[14pt]{article}
+\usepackage[english,russian]{babel}
+\usepackage[a4paper, margin=0.5cm, bottom=1.5cm]{geometry}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{icomma}
+\usepackage{lipsum} 
+\usepackage{amssymb}
+\usepackage{paracol}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{diagbox}
+\usepackage{tikz}
+\usepackage{geometry}
+\usepackage{indentfirst}
+
+\begin{document}
+{\fontsize{14pt}{16pt}\selectfont
+\newgeometry{a4paper,top=2cm,left=3cm,right=1.5cm,bottom=2cm}
+\input{title}}
+\newgeometry{a4paper, margin=0.5cm, bottom=1.5cm}
+\pagecolor[rgb]{1, 1, 0.93}
+\columnratio{0.5,0.5}
+\input{kvant}
+
+\end{document}
