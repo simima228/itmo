@@ -18,4 +18,8 @@ public class Location implements CheckInterface {
     public boolean check() {
         return true;
     }
+
+    public String toString() {
+        return "Локация" + ": " + "[x = " + x + ", y = " + y + ", z = " + z + "]";
+    }
 }

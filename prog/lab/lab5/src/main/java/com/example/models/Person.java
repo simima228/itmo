@@ -19,4 +19,11 @@ public class Person implements CheckInterface {
     public boolean check(){
         return name != null && !name.isEmpty() && height > 0 && nationality != null && location != null;
     }
+
+    @Override
+    public String toString() {
+        return "Человек" + "[" + "Имя" + ": " + name + ", " + "Рост" + ": "
+                + height + ", " + "Национальность" + ": " + nationality +
+                ", " + location + "]";
+    }
 }

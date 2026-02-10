@@ -15,4 +15,8 @@ public class Coordinates implements CheckInterface {
     public boolean check() {
         return x != null;
     }
+    @Override
+    public String toString(){
+        return "Кординаты" + ": " + "[x = " + x + ", y = " + y + "]";
+    }
 }

@@ -8,7 +8,10 @@ public class Exit extends BaseCommand {
         super("exit", "exit", "завершить программу (без сохранения в файл)");
     }
 
-    public CommandStatus execute() {
+    public CommandStatus execute(String[] args) {
+        if (!args[1].trim().isEmpty()) {
+            return wrongUsage();
+        }
         return new CommandStatus(true, "ㅤ");
     }
 }

@@ -17,10 +17,13 @@ public class Help extends BaseCommand {
         this.commandRegister = commandRegister;
     }
 
-    public CommandStatus execute() {
+    public CommandStatus execute(String[] args) {
+        if (!args[1].trim().isEmpty()) {
+            return wrongUsage();
+        }
         for (Map.Entry<String, BaseCommand> entry : commandRegister.getCommands().entrySet()) {
             console.println(entry.getValue().getInfoName() + ": " + entry.getValue().getDescription());
         }
-        return new CommandStatus(true, "Команда выполнена успешно!");
+        return super.execute(args);
     }
 }

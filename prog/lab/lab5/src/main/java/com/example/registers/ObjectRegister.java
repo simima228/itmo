@@ -6,8 +6,14 @@ import com.example.models.*;
 import java.time.LocalDate;
 
 public class ObjectRegister {
+    public static class Break extends Exception {
+        @Override
+        public String getMessage() {
+            return "\nКоманда прервана пользователем!\n";
+        }
+    }
 
-    public Movie createMovie(Console console, int id) {
+    public Movie createMovie(Console console, int id) throws Break {
         String line;
         String name;
         Coordinates coordinates;
@@ -17,6 +23,7 @@ public class ObjectRegister {
         MpaaRating rating;
         Person director;
         console.println("Создание фильма...");
+        console.println("Для выхода из создания напишите /exit");
         name = createMovieName(console);
         coordinates = createCoordinates(console);
         oscars = createOscars(console);
@@ -25,22 +32,24 @@ public class ObjectRegister {
         rating = createRating(console);
         console.println("Хотите ли вы добавить режиссера фильма? Да/Нет: ");
         line = console.read().trim();
-        if (line.equalsIgnoreCase("ДА")){
+        if (line.equalsIgnoreCase("ДА")) {
             director = createPerson(console);
-        }
-        else {
+        } else {
             director = null;
         }
         return new Movie(id, name, coordinates, LocalDate.now(), oscars, totalBox, genre,
                 rating, director);
-    }
+        }
 
-    private String createMovieName(Console console) {
+    private String createMovieName(Console console) throws Break {
         String line;
         String name;
         console.println("Введите название фильма: ");
         while (true){
             line = console.read().trim();
+            if (line.equals("/exit")) {
+                throw new Break();
+            }
             if (line.isEmpty()){
                 console.println("Название фильма не может быть пустым, введите корректное название: ");
                 continue;
@@ -51,12 +60,15 @@ public class ObjectRegister {
         }
     }
 
-    private Long createOscars(Console console) {
+    private Long createOscars(Console console) throws Break {
         String line;
         Long oscars;
         console.println("Введите количество Оскаров (целое число больше нуля): ");
         while (true){
             line = console.read().trim();
+            if (line.equals("/exit")) {
+                throw new Break();
+            }
             if (line.isEmpty()){
                 console.println("Количество Оскаров не может быть пустым, введите корректное число: ");
                 continue;
@@ -76,14 +88,17 @@ public class ObjectRegister {
         }
     }
 
-    private Integer createTotalBox(Console console) {
+    private Integer createTotalBox(Console console) throws Break {
         String line;
         Integer totalBox;
-        console.println("Введите размер сборов (целое число больше нуля): ");
+        console.println("Введите размер кассовых сборов (целое число больше нуля): ");
         while (true){
             line = console.read().trim();
+            if (line.equals("/exit")) {
+                throw new Break();
+            }
             if (line.isEmpty()){
-                console.println("Размер сборов не может быть пустым, введите корректное число: ");
+                console.println("Размер кассовых сборов не может быть пустым, введите корректное число: ");
             }
             try {
                 totalBox = Integer.parseInt(line);
@@ -91,16 +106,16 @@ public class ObjectRegister {
                     console.println("Число должно быть положительным, введите корректное число: ");
                     continue;
                 }
-                console.println("Размер сборов успешно добавлен!");
+                console.println("Кассовые сборы успешно добавлен!");
                 return totalBox;
             }
             catch (NumberFormatException e){
-                console.println("Введите корректный размер сборов: ");
+                console.println("Введите корректные кассовые сборы: ");
             }
         }
     }
 
-    private Coordinates createCoordinates(Console console){
+    private Coordinates createCoordinates(Console console) throws Break {
         String line;
         Float x;
         long y;
@@ -108,6 +123,9 @@ public class ObjectRegister {
         console.println("Введите координату x в формате числа с плавающей точкой: ");
         while (true){
             line = console.read().trim();
+            if (line.equals("/exit")) {
+                throw new Break();
+            }
             if (line.isEmpty()){
                 console.println("Координата x не может быть пустой, введите корректное число: ");
                 continue;
@@ -124,6 +142,9 @@ public class ObjectRegister {
         console.println("Введите координату y в формате целого числа: ");
         while (true){
             line = console.read().trim();
+            if (line.equals("/exit")) {
+                throw new Break();
+            }
             if (line.isEmpty()){
                 console.println("Координата y не может быть пустой, введите корректное число: ");
                 continue;
@@ -141,13 +162,16 @@ public class ObjectRegister {
         return new Coordinates(x, y);
     }
 
-    private MovieGenre createGenre(Console console){
+    private MovieGenre createGenre(Console console) throws Break {
         String line;
         MovieGenre genre;
         console.println("Введите жанр фильма (если его нет, нажмите Enter)");
         console.println(MovieGenre.getGenre());
         while (true) {
             line = console.read().trim();
+            if (line.equals("/exit")) {
+                throw new Break();
+            }
             if (line.isEmpty()) {
                 return null;
             }
@@ -162,13 +186,16 @@ public class ObjectRegister {
         }
     }
 
-    private MpaaRating createRating(Console console){
+    private MpaaRating createRating(Console console) throws Break {
         String line;
         MpaaRating rating;
         console.println("Введите MPAA рейтинг фильма (если его нет, нажмите Enter)");
         console.println(MpaaRating.getRatings());
         while (true) {
             line = console.read().trim();
+            if (line.equals("/exit")) {
+                throw new Break();
+            }
             if (line.isEmpty()) {
                 return null;
             }
@@ -183,17 +210,20 @@ public class ObjectRegister {
         }
     }
 
-    private Person createPerson(Console console){
+    private Person createPerson(Console console) throws Break {
         return new Person(createPersonName(console), createPersonHeight(console), createPersonCountry(console),
                 createPersonLocation(console));
     }
 
-    private String createPersonName(Console console){
+    private String createPersonName(Console console) throws Break {
         String line;
         String name;
         console.println("Введите имя человека: ");
         while (true){
             line = console.read().trim();
+            if (line.equals("/exit")) {
+                throw new Break();
+            }
             if (line.isEmpty()){
                 console.println("У человека не может быть имени, введите корректное имя: ");
                 continue;
@@ -204,12 +234,15 @@ public class ObjectRegister {
         }
     }
 
-    private int createPersonHeight(Console console){
+    private int createPersonHeight(Console console) throws Break {
         String line;
         int height;
         console.println("Введите его рост (целое число больше нуля): ");
         while (true){
             line = console.read().trim();
+            if (line.equals("/exit")) {
+                throw new Break();
+            }
             if (line.isEmpty()){
                 console.println("У человека не может не быть роста, введите корректный рост: ");
                 continue;
@@ -229,13 +262,16 @@ public class ObjectRegister {
         }
     }
 
-    private Country createPersonCountry(Console console){
+    private Country createPersonCountry(Console console) throws Break {
         String line;
         Country nationality;
         console.println("Введите его национальность: ");
         console.println(Country.getCountry());
         while (true) {
             line = console.read().trim();
+            if (line.equals("/exit")) {
+                throw new Break();
+            }
             if (line.isEmpty()) {
                 console.println("У человека не может не быть национальности, введите корректную страну: ");
                 continue;
@@ -251,7 +287,7 @@ public class ObjectRegister {
         }
     }
 
-    private Location createPersonLocation(Console console){
+    private Location createPersonLocation(Console console) throws Break {
         String line;
         long x;
         int y;
@@ -260,6 +296,9 @@ public class ObjectRegister {
         console.println("Введите координату x в формате целого числа: ");
         while (true){
             line = console.read().trim();
+            if (line.equals("/exit")) {
+                throw new Break();
+            }
             if (line.isEmpty()){
                 console.println("Координата x не может быть пустой, введите корректное число: ");
                 continue;
@@ -276,6 +315,9 @@ public class ObjectRegister {
         console.println("Введите координату y в формате целого числа: ");
         while (true){
             line = console.read().trim();
+            if (line.equals("/exit")) {
+                throw new Break();
+            }
             if (line.isEmpty()){
                 console.println("Координата y не может быть пустой, введите корректное число: ");
                 continue;
@@ -293,6 +335,9 @@ public class ObjectRegister {
         console.println("Введите координату z в формате числа с плавающей точкой: ");
         while (true){
             line = console.read().trim();
+            if (line.equals("/exit")) {
+                throw new Break();
+            }
             if (line.isEmpty()){
                 console.println("Координата z не может быть пустой, введите корректное число: ");
                 continue;

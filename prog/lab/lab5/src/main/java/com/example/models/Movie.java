@@ -4,7 +4,7 @@ import com.example.etc.CheckInterface;
 
 import java.time.LocalDate;
 
-public class Movie implements CheckInterface {
+public class Movie implements CheckInterface, Comparable<Movie> {
     private int id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     private String name; //Поле не может быть null, Строка не может быть пустой
     private Coordinates coordinates; //Поле не может быть null
@@ -78,5 +78,24 @@ public class Movie implements CheckInterface {
                 && creationDate != null
                 && oscarsCount != null && oscarsCount > 0
                 && totalBoxOffice != null && totalBoxOffice > 0;
+    }
+
+    @Override
+    public String toString(){
+        return "Фильм" + ": " + "[" +
+                "id" + ": " + id +
+                ", " + "name" + ": " + name +
+                ", " + coordinates +
+                ", " + "Дата создания" + ": " + creationDate +
+                ", " + "Количество Оскаров" + ": " + oscarsCount +
+                ", " + "Кассовые сборы" + ": " + totalBoxOffice +
+                ", " + "Жанр" + ": " + (genre == null ? "Отсутствует": genre) +
+                ", " + "Рейтинг MPAA" + ": " + (mpaaRating == null ? "Отсутствует": mpaaRating) +
+                ", " + "Режиссер" + ": " + (director == null ? "Отсутствует": director) + "]";
+    }
+
+    @Override
+    public int compareTo(Movie movie) {
+        return this.getName().compareTo(movie.getName());
     }
 }

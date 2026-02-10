@@ -12,7 +12,7 @@ public class CommandStatus {
         return message;
     }
 
-    public boolean getStatus(String message) {
+    public boolean getStatus() {
         return status;
     }
 

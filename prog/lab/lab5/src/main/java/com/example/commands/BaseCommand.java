@@ -25,8 +25,12 @@ abstract public class BaseCommand {
         return infoName;
     }
 
-    public CommandStatus execute() {
-        return new CommandStatus(true, "exit");
+    public CommandStatus execute(String[] args) {
+        return new CommandStatus(true, "\nКоманда выполнена успешно!\n");
+    }
+
+    public static CommandStatus wrongUsage() {
+        return new CommandStatus(false, "\nКоманда используется неверно!\n");
     }
 
 }
