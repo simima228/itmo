@@ -5,4 +5,12 @@ public enum Country {
     ITALY,
     THAILAND,
     JAPAN;
+
+    public static String getCountry() {
+        StringBuilder country = new StringBuilder();
+        for (Country c : Country.values()) {
+            country.append(c.name()).append("\n");
+        }
+        return country.substring(0, country.length() - 1);
+    }
 }

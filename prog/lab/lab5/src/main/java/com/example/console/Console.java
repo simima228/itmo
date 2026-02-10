@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class Console implements ConsoleInterface {
     Scanner scanner = new Scanner(System.in);
+
     @Override
     public void println(Object obj) {
         System.out.println(obj);

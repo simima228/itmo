@@ -1,14 +1,23 @@
 package com.example.registers;
+import com.example.models.Movie;
+
 import java.util.Stack;
 
 public class CollectionRegister {
-    private Stack<Object> stack = new Stack<>();
+    private int id = 0;
+    private Stack<Movie> stack = new Stack<>();
 
-    public Stack<Object> getStack(){
+    public Stack<Movie> getStack(){
         return stack;
     }
 
-    public void push(Object obj){
-        stack.push(obj);
+    public void push(Movie movie) {
+        stack.push(movie);
     }
+
+    public int getNewId() {
+        this.id = id + 1;
+        return id;
+    }
+
 }
