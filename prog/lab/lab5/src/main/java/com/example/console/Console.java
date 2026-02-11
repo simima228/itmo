@@ -16,6 +16,7 @@ public class Console implements ConsoleInterface {
     public void print(Object obj) {
         System.out.print(obj);
     }
+
     @Override
     public String read() {
         return scanner.nextLine();

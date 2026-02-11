@@ -1,8 +1,6 @@
 package com.example.models;
 
-import com.example.etc.CheckInterface;
-
-public class Coordinates implements CheckInterface {
+public class Coordinates {
     private Float x; //Поле не может быть null
     private long y;
 
@@ -11,10 +9,13 @@ public class Coordinates implements CheckInterface {
         this.y = y;
     }
 
-    @Override
-    public boolean check() {
-        return x != null;
+    public Float getX() {
+        return x;
     }
+    public long getY() {
+        return y;
+    }
+
     @Override
     public String toString(){
         return "Кординаты" + ": " + "[x = " + x + ", y = " + y + "]";

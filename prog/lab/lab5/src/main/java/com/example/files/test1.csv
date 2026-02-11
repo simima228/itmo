@@ -1,0 +1,4 @@
+movie_name,coordinate_x,coordinate_y,date,oscars,total_box,movie_genre,mpaa_rating,person_name,person_height,person_nationality,location_x,location_y,location_z
+film,2.0,3,2007-12-03,1,2,ACTION,R,krasava,2,INDIA,3,4,5.0
+film2,3.0,4,2007-12-03,3,4,,,,,,,,
+KOT,6.0,7,2026-02-11,6,7,THRILLER,PG_13,KOT,67,JAPAN,6,6,6.0

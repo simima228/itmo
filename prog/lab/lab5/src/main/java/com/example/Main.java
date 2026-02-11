@@ -3,21 +3,33 @@ package com.example;
 import com.example.commands.*;
 import com.example.console.Console;
 import com.example.console.Printer;
-import com.example.registers.CollectionRegister;
-import com.example.registers.CommandRegister;
-import com.example.registers.HistoryRegister;
-import com.example.registers.ObjectRegister;
+import com.example.models.MpaaRating;
+import com.example.registers.*;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.time.LocalDate;
 
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
 
         Console console = new Console();
         CollectionRegister collectionRegister = new CollectionRegister();
         CommandRegister commandRegister = new CommandRegister();
         ObjectRegister objectRegister = new ObjectRegister();
         HistoryRegister historyRegister = new HistoryRegister();
-
+        FileRegister fileRegister = new FileRegister("test1.csv", console, collectionRegister);
+        try {
+            fileRegister.readCsv();
+        }
+        catch (FileNotFoundException e) {
+            console.println("Файл не найден, считывание информации невозможно!");
+        }
+        catch (FileRegister.WrongNumberException | FileRegister.WrongFieldException e) {
+            console.println(e.getMessage());
+        }
+        fileRegister.writeCsv();
         commandRegister.register(new Help(console, commandRegister));
         commandRegister.register(new Add(console, collectionRegister, objectRegister));
         commandRegister.register(new Exit());
@@ -32,6 +44,7 @@ public class Main {
         commandRegister.register(new AverageOfTotalBoxOffice(console, collectionRegister));
         commandRegister.register(new CountGreaterThanOscarsCount(console, collectionRegister));
         commandRegister.register(new PrintDescending(console, collectionRegister));
+        commandRegister.register(new Save(console, fileRegister));
 
         Printer printer = new Printer(console, commandRegister, historyRegister);
         printer.run();

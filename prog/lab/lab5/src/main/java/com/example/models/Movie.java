@@ -1,10 +1,8 @@
 package com.example.models;
 
-import com.example.etc.CheckInterface;
-
 import java.time.LocalDate;
 
-public class Movie implements CheckInterface, Comparable<Movie> {
+public class Movie implements Comparable<Movie> {
     private int id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     private String name; //Поле не может быть null, Строка не может быть пустой
     private Coordinates coordinates; //Поле не может быть null
@@ -70,14 +68,16 @@ public class Movie implements CheckInterface, Comparable<Movie> {
         return director;
     }
 
-    @Override
-    public boolean check() {
-        return id > 0
-                && name != null && !name.isEmpty()
-                && coordinates != null
-                && creationDate != null
-                && oscarsCount != null && oscarsCount > 0
-                && totalBoxOffice != null && totalBoxOffice > 0;
+    public static boolean checkOscars(Long count) {
+        return count != null && count > 0;
+    }
+
+    public static boolean checkName(String checkName) {
+        return checkName != null && !checkName.isEmpty();
+    }
+
+    public static boolean checkTotalBox(Integer box) {
+        return box != null && box > 0;
     }
 
     @Override

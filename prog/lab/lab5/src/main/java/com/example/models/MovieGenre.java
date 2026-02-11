@@ -14,4 +14,5 @@ public enum MovieGenre {
         }
         return sb.substring(0, sb.length() - 1);
     }
+
 }

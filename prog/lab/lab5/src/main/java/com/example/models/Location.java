@@ -1,8 +1,6 @@
 package com.example.models;
 
-import com.example.etc.CheckInterface;
-
-public class Location implements CheckInterface {
+public class Location {
     private long x;
     private int y;
     private double z;
@@ -13,10 +11,16 @@ public class Location implements CheckInterface {
         this.z = z;
     }
 
+    public long getX() {
+        return x;
+    }
 
-    @Override
-    public boolean check() {
-        return true;
+    public int getY() {
+        return y;
+    }
+
+    public double getZ() {
+        return z;
     }
 
     public String toString() {

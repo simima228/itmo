@@ -1,8 +1,6 @@
 package com.example.models;
 
-import com.example.etc.CheckInterface;
-
-public class Person implements CheckInterface {
+public class Person {
     private String name; //Поле не может быть null, Строка не может быть пустой
     private int height; //Значение поля должно быть больше 0
     private Country nationality; //Поле не может быть null
@@ -15,9 +13,34 @@ public class Person implements CheckInterface {
         this.location = location;
     }
 
-    @Override
-    public boolean check(){
-        return name != null && !name.isEmpty() && height > 0 && nationality != null && location != null;
+    public static boolean checkName(String checkName){
+        return checkName != null && !checkName.isEmpty();
+    }
+
+    public static boolean checkHeight(int checkHeight){
+        return checkHeight > 0;
+    }
+
+    public static boolean checkNationality(Country checkNationality){
+        return checkNationality != null;
+    }
+
+    public static boolean checkLocation(Location checkLocation){
+        return checkLocation != null;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+    public Country getNationality() {
+        return nationality;
+    }
+    public String getLocation() {
+        return location.getX() + "," + location.getY() + "," + location.getZ();
     }
 
     @Override
