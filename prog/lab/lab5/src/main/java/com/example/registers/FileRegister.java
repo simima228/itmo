@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.io.PrintWriter;
 
@@ -55,153 +56,14 @@ public class FileRegister {
         if (fields.size() % fieldCount != 0) {
             throw new WrongNumberException();
         }
-        ArrayList<Movie> movies = new ArrayList<>();
-        for (int i = 1; i < fields.size() / fieldCount; i++) {
-            String line;
-            String movieName;
-            Coordinates coordinates;
-            Float coordinatesX;
-            long coordinatesY;
-            LocalDate creationDate;
-            Long osc;
-            Integer totalBox;
-            MovieGenre genre;
-            MpaaRating rating;
-            Person director;
-            String directorName;
-            int height;
-            Country country;
-            Location location;
-            Long locationX;
-            Integer locationY;
-            Double locationZ;
-            line = fields.get(i * fieldCount);
-            if (line.isEmpty()){
-                throw new WrongFieldException("В строке данных файла номер " + i + " указано пустое имя фильма.");
-            }
-            movieName = line;
-            try {
-                coordinatesX = Float.parseFloat(fields.get(i * fieldCount + 1).replace(",", "."));
-            }
-            catch (NumberFormatException e) {
-                throw new WrongFieldException("В строке данных файла номер " + i
-                        + " указана некорректная координата X.");
-            }
-            try {
-                coordinatesY = Long.parseLong(fields.get(i * fieldCount + 2));
-            }
-            catch (NumberFormatException e) {
-                throw new WrongFieldException("В строке данных файла номер " + i
-                        + " указана некорректная координата Y.");
-            }
-            coordinates = new Coordinates(coordinatesX, coordinatesY);
-            try {
-                creationDate = LocalDate.parse(fields.get(i * fieldCount + 3));
-            }
-            catch (DateTimeParseException e) {
-                throw new WrongFieldException("В строке данных файла номер " + i + " указана некорректная дата.");
-            }
-            try {
-                osc = Long.parseLong(fields.get(i * fieldCount + 4));
-                if (!Movie.checkOscars(osc)){
-                    throw new WrongFieldException("В строке данных файла номер " + i
-                            + " указано некорректное количество Оскаров.");
-                }
-            }
-            catch (NumberFormatException e) {
-                throw new WrongFieldException("В строке данных файла номер " + i
-                        + " указано некорректное количество Оскаров.");
-            }
-            try {
-                totalBox = Integer.parseInt(fields.get(i * fieldCount + 5));
-                if (!Movie.checkTotalBox(totalBox)){
-                    throw new WrongFieldException("В строке данных файла номер " + i
-                            + " указано некорректное количество кассовых сборов.");
-                }
-            }
-            catch (NumberFormatException e) {
-                throw new WrongFieldException("В строке данных файла номер " +
-                        i + " указано некорректное количество кассовых сборов.");
-            }
-            line = fields.get(i * fieldCount + 6);
-            if (!line.isEmpty()){
-                try {
-                    genre = MovieGenre.valueOf(line.toUpperCase());
-                }
-                catch (IllegalArgumentException e) {
-                    throw new WrongFieldException("В строке данных файла номер " +
-                            i + " указан некорректный жанр.");
-                }
-            }
-            else {
-                genre = null;
-            }
-            line = fields.get(i * fieldCount + 7);
-            MpaaRating mpaaRating;
-            if (!line.isEmpty()){
-                try {
-                    mpaaRating = MpaaRating.valueOf(line.toUpperCase());
-                }
-                catch (IllegalArgumentException e) {
-                    throw new WrongFieldException("В строке данных файла номер " +
-                            i + " указан некорректный MPAA рейтинг.");
-                }
-            }
-            else {
-                mpaaRating = null;
-            }
-            line = fields.get(i * fieldCount + 8);
-            if (line.isEmpty()){
-                movies.add(new Movie(collectionRegister.getNewId(), movieName, coordinates, creationDate, osc, totalBox,
-                        genre, mpaaRating, null));
-            }
-            else {
-                directorName = line;
-                try {
-                    height = Integer.parseInt(fields.get(i * fieldCount + 9));
-                    if (!Person.checkHeight(height)){
-                        throw new WrongFieldException("В строке данных файла номер " + i
-                                + " указан рост меньший 1.");
-                    }
-                }
-                catch (NumberFormatException e) {
-                    throw new WrongFieldException("В строке данных файла номер " + i
-                            + " указано некорректный рост.");
-                }
-                try {
-                    country = Country.valueOf(fields.get(i * fieldCount + 10).toUpperCase());
-                }
-                catch (IllegalArgumentException e) {
-                    throw new WrongFieldException("В строке данных файла номер " + i + " указана некорректная страна.");
-                }
-                try {
-                    locationX = Long.parseLong(fields.get(i * fieldCount + 11));
-                }
-                catch (NumberFormatException e) {
-                    throw new WrongFieldException("В строке данных файла номер " + i
-                            + " указана некорректная координата X локации.");
-                }
-                try {
-                    locationY = Integer.parseInt(fields.get(i * fieldCount + 12));
-                }
-                catch (NumberFormatException e) {
-                    throw new WrongFieldException("В строке данных файла номер " + i
-                            + " указана некорректная координата Y локации.");
-                }
-                try {
-                    locationZ = Double.parseDouble(fields.get(i * fieldCount + 13).replace(",", "."));
-                }
-                catch (NumberFormatException e) {
-                    throw new WrongFieldException("В строке данных файла номер " + i
-                            + " указана некорректная координата Z локации.");
-                }
-                director = new Person(directorName, height, country, new Location(locationX, locationY, locationZ));
-                movies.add(new Movie(collectionRegister.getNewId(), movieName, coordinates, creationDate, osc, totalBox,
-                        genre, mpaaRating, director));
+        try {
+            ArrayList<Movie> movies = parseObjects(fields, 1);
+            for (Movie movie : movies) {
+                collectionRegister.push(movie);
             }
         }
-        for (Movie movie : movies){
-            collectionRegister.push(movie);
+        catch (WrongFieldException e) {
+            throw new WrongFieldException(e.getMessage());
         }
         console.println("Файл считан успешно!");
     }
@@ -221,7 +83,8 @@ public class FileRegister {
             writer.println(movie.getName() + "," + movie.getCoordinates().getX() + "," + movie.getCoordinates().getY()
             + "," + movie.getCreationDate() + "," + movie.getOscarsCount() + "," + movie.getTotalBoxOffice()
             + "," + (movie.getGenre() != null ? movie.getGenre() : "") + ","
-                    + (movie.getMpaaRating() != null ? movie.getMpaaRating() : "") + ",,,,,,");
+                    + (movie.getMpaaRating() != null ? movie.getMpaaRating() : "") + ","
+                    + ",".repeat(fieldCount - 8 - 1));
             }
             else {
                 writer.println(movie.getName() + "," + movie.getCoordinates().getX() + ","
@@ -236,4 +99,202 @@ public class FileRegister {
         }
         writer.close();
     }
+
+    private ArrayList<Movie> parseObjects(ArrayList<String> fields, int index) throws WrongFieldException {
+        try {
+            ArrayList<Movie> movies = new ArrayList<>();
+            for (int i = index; i < fields.size() / fieldCount; i++) {
+                movies.add(parseObject(fields.subList(i * fieldCount, (i + 1) * fieldCount)));
+            }
+            return movies;
+        }
+        catch (WrongFieldException e) {
+            throw new WrongFieldException(e.getMessage() + (index == 1 ? " на " + index + " строке файла" +
+                    ", считывание файла невозможно": ""));
+        }
+    }
+
+    public Movie parseObject(List<String> data) throws WrongFieldException {
+        try {
+            String movieName = getName(data.get(0));
+            Coordinates coordinates = getCoordinates(data.get(1), data.get(2));
+            LocalDate creationDate = getDate(data.get(3));
+            Long osc = getOsc(data.get(4));
+            Integer totalBox = getTotalBoxOffice(data.get(5));
+            MovieGenre genre = getGenre(data.get(6));
+            MpaaRating mpaaRating = getMpaaRating(data.get(7));
+            Person director;
+            String directorName = data.get(8);
+            String height = data.get(9);
+            String country = data.get(10);
+            String locationX = data.get(11);
+            String locationY = data.get(12);
+            String locationZ = data.get(13);
+            if (directorName.isEmpty() && height.isEmpty() && country.isEmpty()
+                    && locationX.isEmpty() && locationY.isEmpty() && locationZ.isEmpty()){
+                director = null;
+            }
+            else {
+                director = getPerson(directorName, height, country, locationX, locationY, locationZ);
+            }
+            return new Movie(collectionRegister.getNewId(), movieName, coordinates, creationDate, osc, totalBox,
+                    genre, mpaaRating, director);
+        }
+        catch (WrongFieldException e) {
+            throw new WrongFieldException(e.getMessage());
+        }
+    }
+
+    private String getName(String name) throws WrongFieldException {
+        if (name.isEmpty()){
+            throw new WrongFieldException("Указано пустое имя фильма");
+        }
+        return name;
+    }
+
+    private Coordinates getCoordinates(String x, String y) throws WrongFieldException {
+        float X;
+        long Y;
+        try {
+            X = Float.parseFloat(x);
+        }
+        catch (NumberFormatException e) {
+            throw new WrongFieldException("Указана некорректная координата X");
+        }
+        try {
+            Y = Long.parseLong(y);
+        }
+        catch (NumberFormatException e) {
+            throw new WrongFieldException("Указана некорректная координата Y");
+        }
+        return new Coordinates(X, Y);
+    }
+
+    private LocalDate getDate(String line) throws WrongFieldException {
+        try {
+            return LocalDate.parse(line);
+        }
+        catch (DateTimeParseException e) {
+            throw new WrongFieldException("Указана некорректная дата");
+        }
+    }
+
+    private long getOsc(String line) throws WrongFieldException {
+        long osc;
+        try {
+            osc = Long.parseLong(line);
+            if (!Movie.checkOscars(osc)){
+                throw new WrongFieldException("Указано некорректное количество Оскаров");
+            }
+        }
+        catch (NumberFormatException e) {
+            throw new WrongFieldException("Указано некорректное количество Оскаров");
+        }
+        return osc;
+    }
+
+    private int getTotalBoxOffice(String line) throws WrongFieldException {
+        int totalBox;
+        try {
+            totalBox = Integer.parseInt(line);
+            if (!Movie.checkTotalBox(totalBox)){
+                throw new WrongFieldException("Указано некорректное количество кассовых сборов");
+            }
+        }
+        catch (NumberFormatException e) {
+            throw new WrongFieldException("Указано некорректное количество кассовых сборов");
+        }
+        return totalBox;
+    }
+
+    private MovieGenre getGenre(String line) throws WrongFieldException {
+        if (!line.isEmpty()){
+            try {
+                return MovieGenre.valueOf(line.toUpperCase());
+            }
+            catch (IllegalArgumentException e) {
+                throw new WrongFieldException("Указан некорректный жанр");
+            }
+        }
+        else {
+            return null;
+        }
+    }
+
+    private MpaaRating getMpaaRating(String line) throws WrongFieldException {
+        if (!line.isEmpty()){
+            try {
+                return MpaaRating.valueOf(line.toUpperCase());
+            }
+            catch (IllegalArgumentException e) {
+                throw new WrongFieldException("Указан некорректный MPAA рейтинг");
+            }
+        }
+        else {
+            return null;
+        }
+    }
+
+    private Person getPerson(String name, String height, String country, String x, String y
+    , String z) throws WrongFieldException {
+        try {
+            return new Person(getPersonName(name), getPersonHeight(height), getCountry(country), getLocation(x, y, z));
+        }
+        catch (WrongFieldException e) {
+            throw new WrongFieldException(e.getMessage());
+        }
+    }
+
+    private String getPersonName(String line) throws WrongFieldException {
+        return line;
+    }
+
+    private int getPersonHeight(String line) throws WrongFieldException {
+        int height;
+        try {
+            height = Integer.parseInt(line);
+            if (!Person.checkHeight(height)){
+                throw new WrongFieldException("Указан рост меньший 1");
+            }
+        }
+        catch (NumberFormatException e) {
+            throw new WrongFieldException("Указан некорректный рост");
+        }
+        return height;
+    }
+
+    private Country getCountry(String line) throws WrongFieldException {
+        try {
+            return Country.valueOf(line.toUpperCase());
+        }
+        catch (IllegalArgumentException e) {
+            throw new WrongFieldException("Указана некорректная страна");
+        }
+    }
+
+    private Location getLocation(String x, String y, String z) throws WrongFieldException {
+        long X;
+        int Y;
+        Double Z;
+        try {
+            X = Long.parseLong(x);
+        }
+        catch (NumberFormatException e) {
+            throw new WrongFieldException("Указана некорректная координата X локации");
+        }
+        try {
+            Y = Integer.parseInt(y);
+        }
+        catch (NumberFormatException e) {
+            throw new WrongFieldException("Указана некорректная координата Y локации");
+        }
+        try {
+            Z = Double.parseDouble(z);
+        }
+        catch (NumberFormatException e) {
+            throw new WrongFieldException("Указана некорректная координата Z локации");
+        }
+        return new Location(X, Y, Z);
+    }
+
 }

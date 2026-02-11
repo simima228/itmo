@@ -29,7 +29,6 @@ public class Main {
         catch (FileRegister.WrongNumberException | FileRegister.WrongFieldException e) {
             console.println(e.getMessage());
         }
-        fileRegister.writeCsv();
         commandRegister.register(new Help(console, commandRegister));
         commandRegister.register(new Add(console, collectionRegister, objectRegister));
         commandRegister.register(new Exit());
