@@ -5,6 +5,8 @@ import com.example.models.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -16,7 +18,6 @@ import java.io.PrintWriter;
 
 public class FileRegister {
     private String fileName;
-    private Scanner scanner;
     private PrintWriter writer;
     private Console console;
     private CollectionRegister collectionRegister;
@@ -28,9 +29,24 @@ public class FileRegister {
             return "\nВ файле неверное количество полей у объектов\n";
         }
     }
+
     public static class WrongFieldException extends Exception {
         public WrongFieldException(String message) {
             super(message);
+        }
+    }
+
+    public static class EmptyFileException extends Exception {
+        @Override
+        public String getMessage() {
+            return "\nФайл пуст!\n";
+        }
+    }
+
+    public static class NoRightsException extends Exception {
+        @Override
+        public String getMessage() {
+            return "\nК файлу нет доступа\n";
         }
     }
 
@@ -41,12 +57,41 @@ public class FileRegister {
         this.fieldCount = 14;
     }
 
-    public void readCsv() throws FileNotFoundException, WrongNumberException, WrongFieldException {
+    public Scanner read(String name) throws FileNotFoundException, EmptyFileException, NoRightsException {
         try {
-            this.scanner = new Scanner(new File("src/main/java/com/example/files/" + fileName));
+            String path = "src/main/java/com/example/files/" + name;
+            if (!Files.isReadable(Paths.get(path))) {
+                throw new NoRightsException();
+            }
+            Scanner scanner = new Scanner(new File(path));
+            if (!scanner.hasNext()) {
+                throw new EmptyFileException();
+            }
+            return scanner;
         }
         catch (FileNotFoundException e) {
             throw new FileNotFoundException("Файл не найден, считывание информации невозможно!");
+        } catch (EmptyFileException e) {
+            throw new EmptyFileException();
+        } catch (NoRightsException e) {
+            throw new NoRightsException();
+        }
+    }
+
+    public void readCsv() throws FileNotFoundException, WrongNumberException,
+            WrongFieldException, EmptyFileException, NoRightsException {
+        Scanner scanner;
+        try {
+            scanner = read(fileName);
+        }
+        catch (FileNotFoundException e) {
+            throw new FileNotFoundException();
+        }
+        catch (EmptyFileException e) {
+            throw new EmptyFileException();
+        }
+        catch (NoRightsException e) {
+            throw new NoRightsException();
         }
         ArrayList<String> fields = new ArrayList<>();
         while (scanner.hasNext()) {
@@ -66,6 +111,28 @@ public class FileRegister {
             throw new WrongFieldException(e.getMessage());
         }
         console.println("Файл считан успешно!");
+    }
+
+    public ArrayList<String> readScript(String scriptName) throws FileNotFoundException,
+            EmptyFileException, NoRightsException {
+        ArrayList<String> commands = new ArrayList<>();
+        Scanner scanner;
+        try {
+            scanner = read(scriptName);
+        }
+        catch (FileNotFoundException e) {
+                throw new FileNotFoundException();
+            }
+        catch (EmptyFileException e) {
+                throw new EmptyFileException();
+            }
+        catch (NoRightsException e) {
+                throw new NoRightsException();
+            }
+        while (scanner.hasNextLine()) {
+            commands.add(scanner.nextLine().trim());
+        }
+        return commands;
     }
 
     public void writeCsv() throws FileNotFoundException {
@@ -104,13 +171,17 @@ public class FileRegister {
         try {
             ArrayList<Movie> movies = new ArrayList<>();
             for (int i = index; i < fields.size() / fieldCount; i++) {
-                movies.add(parseObject(fields.subList(i * fieldCount, (i + 1) * fieldCount)));
+                try {
+                    movies.add(parseObject(fields.subList(i * fieldCount, (i + 1) * fieldCount)));
+                }
+                catch (WrongFieldException e) {
+                    throw new WrongFieldException(e.getMessage() + (index == 1 ? " на " + i + " строке файла" +
+                            ", считывание файла невозможно": ""));}
             }
             return movies;
         }
         catch (WrongFieldException e) {
-            throw new WrongFieldException(e.getMessage() + (index == 1 ? " на " + index + " строке файла" +
-                    ", считывание файла невозможно": ""));
+            throw new WrongFieldException(e.getMessage());
         }
     }
 

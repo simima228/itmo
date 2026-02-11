@@ -19,16 +19,20 @@ public class Main {
         CommandRegister commandRegister = new CommandRegister();
         ObjectRegister objectRegister = new ObjectRegister();
         HistoryRegister historyRegister = new HistoryRegister();
-        FileRegister fileRegister = new FileRegister("test1.csv", console, collectionRegister);
+        FileRegister fileRegister = new FileRegister("test.csv", console, collectionRegister);
         try {
             fileRegister.readCsv();
         }
         catch (FileNotFoundException e) {
             console.println("Файл не найден, считывание информации невозможно!");
         }
-        catch (FileRegister.WrongNumberException | FileRegister.WrongFieldException e) {
+        catch (FileRegister.WrongNumberException |
+               FileRegister.WrongFieldException |
+               FileRegister.EmptyFileException |
+                FileRegister.NoRightsException e) {
             console.println(e.getMessage());
         }
+
         commandRegister.register(new Help(console, commandRegister));
         commandRegister.register(new Add(console, collectionRegister, objectRegister));
         commandRegister.register(new Exit());
@@ -44,8 +48,9 @@ public class Main {
         commandRegister.register(new CountGreaterThanOscarsCount(console, collectionRegister));
         commandRegister.register(new PrintDescending(console, collectionRegister));
         commandRegister.register(new Save(console, fileRegister));
+        commandRegister.register(new ExecuteScript(console));
 
-        Printer printer = new Printer(console, commandRegister, historyRegister);
+        Printer printer = new Printer(console, commandRegister, historyRegister, fileRegister);
         printer.run();
 
 }
