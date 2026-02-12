@@ -17,12 +17,12 @@ public class Main {
         ObjectRegister objectRegister = new ObjectRegister();
         HistoryRegister historyRegister = new HistoryRegister();
 
-//        if (args.length != 1) {
-//            console.println("Введите корректное название файла при запуске!");
-//            System.exit(0);
-//        }
+        if (args.length != 1) {
+            console.println("Введите корректное название файла при запуске!");
+            System.exit(0);
+        }
 
-        FileRegister fileRegister = new FileRegister("", console, collectionRegister);
+        FileRegister fileRegister = new FileRegister(args[0].trim(), console, collectionRegister);
 
         try {
             fileRegister.readCsv();

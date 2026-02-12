@@ -7,7 +7,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-group = "org.example"
+group = "com.example"
 version = ""
 
 repositories {
@@ -23,3 +23,8 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.jar{
+    manifest {
+        attributes["Main-Class"] = "com.example.Main"
+    }
+}
