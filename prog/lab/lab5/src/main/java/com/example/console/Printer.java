@@ -105,7 +105,7 @@ public class Printer {
                     if ((console.read() + " ").split(" ", 2)[0].trim().equalsIgnoreCase("да")){
                         int i = 1;
                         String newArgs;
-                        while (i < 3){
+                        while (i < 100){
                             newArgs = (command + " ").split(" ", 2)[1].trim();
                             boolean flag = false;
                             ArrayList<String> checkCommands = fileRegister.readScript(newArgs);
@@ -122,8 +122,8 @@ public class Printer {
                                 break;
                             }
                         }
-                        if (i == 3){
-                            console.println("Превышена глубина рекурсии 500, выполнение невозможно!");
+                        if (i == 100){
+                            console.println("Превышена глубина рекурсии 100, выполнение невозможно!");
                             return false;
                         }
                         return true;
