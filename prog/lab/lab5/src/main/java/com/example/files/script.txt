@@ -1,19 +1,2 @@
-help
-info
+execute_script script1.txt
 show
-add
-rrr
-1
-2
-2007-12-03
-4
-5
-
-
-Да
-kot
-333
-india
-4
-5
-6

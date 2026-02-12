@@ -5,8 +5,8 @@ import com.example.etc.CommandStatus;
 import com.example.registers.CollectionRegister;
 
 public class Info extends BaseCommand {
-    private Console console;
-    private CollectionRegister collectionRegister;
+    private final Console console;
+    private final CollectionRegister collectionRegister;
 
     public Info(Console console, CollectionRegister collectionRegister) {
         super("info", "info", "вывести в стандартный поток вывода" +

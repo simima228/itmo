@@ -5,8 +5,8 @@ import com.example.etc.CommandStatus;
 import com.example.registers.CollectionRegister;
 
 public class Sort extends BaseCommand {
-    private Console console;
-    private CollectionRegister collectionRegister;
+    private final Console console;
+    private final CollectionRegister collectionRegister;
 
     public Sort(Console console, CollectionRegister collectionRegister) {
         super("sort", "sort", "отсортировать коллекцию в естественном порядке");

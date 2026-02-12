@@ -12,6 +12,6 @@ public class Exit extends BaseCommand {
         if (!args[1].trim().isEmpty()) {
             return wrongUsage();
         }
-        return new CommandStatus(true, "ㅤ");
+        return new CommandStatus(true, "exit");
     }
 }

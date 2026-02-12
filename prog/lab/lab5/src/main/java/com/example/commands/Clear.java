@@ -4,11 +4,10 @@ import com.example.console.Console;
 import com.example.etc.CommandStatus;
 import com.example.registers.CollectionRegister;
 
-import java.util.Map;
 
 public class Clear extends BaseCommand {
-    private Console console;
-    private CollectionRegister collectionRegister;
+    private final Console console;
+    private final CollectionRegister collectionRegister;
 
     public Clear(Console console, CollectionRegister collectionRegister) {
         super("clear", "clear", "очистить коллекцию");

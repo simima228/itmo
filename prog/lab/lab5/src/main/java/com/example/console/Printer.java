@@ -5,13 +5,15 @@ import com.example.registers.HistoryRegister;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 public class Printer {
 
-    private Console console;
-    private CommandRegister commandRegister;
-    private HistoryRegister historyRegister;
-    private FileRegister fileRegister;
+
+    private final Console console;
+    private final CommandRegister commandRegister;
+    private final HistoryRegister historyRegister;
+    private final FileRegister fileRegister;
 
     public Printer(Console console, CommandRegister commandRegister, HistoryRegister historyRegister,
                    FileRegister fileRegister) {
@@ -21,15 +23,13 @@ public class Printer {
         this.fileRegister = fileRegister;
     }
 
-    public void run() {
-        console.println("Вас приветствует командное приложение {вставьте название вашего приложения во время сдачи}," +
-                " для ознакомления с командами введите help.");
-        while (true) {
+    public void run(boolean script) {
+        while (!script || console.getScanner().hasNextLine()) {
             console.println("Введите команду: ");
             try {
                 String[] command = (console.read() + " ").split(" ", 2);
-                String status = executeCommand(command);
-                if (status.equals("ㅤ")){
+                String status = executeCommand(command, script);
+                if (status.equals("exit")){
                     console.println("Завершение программы...");
                     break;
                 }
@@ -41,11 +41,19 @@ public class Printer {
                     FileRegister.EmptyFileException e){
                 console.println(e.getMessage());
             }
+            catch (NoSuchElementException e) {
+                console.println("В скрипте недостаточно строк для заполнения полей!");
+                break;
+            }
+            catch (StackOverflowError e) {
+                console.println("Превышена глубина рекурсии.");
+                console.setDefaultScanner();
+            }
         }
 
     }
 
-    public String executeCommand(String[] tempCommand) throws
+    public String executeCommand(String[] tempCommand, boolean script) throws
             FileRegister.NoRightsException, FileNotFoundException, FileRegister.EmptyFileException {
         var command = commandRegister.getCommands().get(tempCommand[0]);
         var commandStatus = command.execute(tempCommand);
@@ -55,7 +63,8 @@ public class Printer {
         if (tempCommand[0].equals("execute_script")) {
             try {
                 console.println("Скрипт " + tempCommand[1].trim() + " выполняется...");
-                scriptExecute(tempCommand[1].trim());
+                scriptExecute(tempCommand[1].trim(), script);
+                console.setDefaultScanner();
             }
             catch (FileNotFoundException | FileRegister.NoRightsException | FileRegister.EmptyFileException e) {
                 console.println(e.getMessage());
@@ -64,12 +73,64 @@ public class Printer {
         return commandStatus.getMessage();
     }
 
-    private void scriptExecute(String args) throws
+    private void scriptExecute(String args, boolean script) throws
             FileRegister.NoRightsException, FileNotFoundException, FileRegister.EmptyFileException {
+        if (!script){
+            if (!checkRecursion(args)){
+                return;
+            }
+        }
+        try {
+            console.setScanner(fileRegister.read(args));
+        }
+        catch (FileRegister.EmptyFileException e) {
+            throw new FileRegister.EmptyFileException();
+        }
+        catch (FileRegister.NoRightsException e) {
+            throw new FileRegister.NoRightsException();
+        }
+        catch (FileNotFoundException e) {
+            throw new FileNotFoundException("Файл не найден, считывание информации невозможно!");
+        }
+        run(true);
+    }
+
+    public boolean checkRecursion(String args) throws FileRegister.EmptyFileException,
+            FileRegister.NoRightsException, FileNotFoundException {
         try {
             ArrayList<String> commands = fileRegister.readScript(args);
             for (String command : commands) {
-                executeCommand((command + " ").split(" ", -1));
+                if ((command + " ").split(" ", 2)[0].trim().equals("execute_script")) {
+                    console.println("В скрипте обнаружена рекурсия! Вы уверены, что хотите продолжить? Да/Нет");
+                    if ((console.read() + " ").split(" ", 2)[0].trim().equalsIgnoreCase("да")){
+                        int i = 1;
+                        String newArgs;
+                        while (i < 3){
+                            newArgs = (command + " ").split(" ", 2)[1].trim();
+                            boolean flag = false;
+                            ArrayList<String> checkCommands = fileRegister.readScript(newArgs);
+                            for (String checkCommand : checkCommands) {
+                                if ((checkCommand + " ").split(" ", 2)[0].trim().equals("execute_script")) {
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if (flag){
+                                i++;
+                            }
+                            else{
+                                break;
+                            }
+                        }
+                        if (i == 3){
+                            console.println("Превышена глубина рекурсии 500, выполнение невозможно!");
+                            return false;
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+                return true;
             }
         }
         catch (FileRegister.EmptyFileException e) {
@@ -81,6 +142,7 @@ public class Printer {
         catch (FileNotFoundException e) {
             throw new FileNotFoundException("Файл не найден, считывание информации невозможно!");
         }
+        return true;
     }
 
 

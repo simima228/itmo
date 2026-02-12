@@ -7,8 +7,8 @@ import com.example.registers.CollectionRegister;
 
 
 public class AverageOfTotalBoxOffice extends BaseCommand {
-    private Console console;
-    private CollectionRegister collectionRegister;
+    private final Console console;
+    private final CollectionRegister collectionRegister;
 
     public AverageOfTotalBoxOffice(Console console, CollectionRegister collectionRegister) {
         super("average_of_total_box_office", "average_of_total_box_office",

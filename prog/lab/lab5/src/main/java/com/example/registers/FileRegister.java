@@ -17,10 +17,10 @@ import java.io.PrintWriter;
 
 
 public class FileRegister {
-    private String fileName;
+    private final String fileName;
     private PrintWriter writer;
-    private Console console;
-    private CollectionRegister collectionRegister;
+    private final Console console;
+    private final CollectionRegister collectionRegister;
     int fieldCount;
 
     public static class WrongNumberException extends Exception {
@@ -46,7 +46,7 @@ public class FileRegister {
     public static class NoRightsException extends Exception {
         @Override
         public String getMessage() {
-            return "\nК файлу нет доступа\n";
+            return "\nК файлу нет доступа или он не существует.\n";
         }
     }
 
@@ -59,11 +59,10 @@ public class FileRegister {
 
     public Scanner read(String name) throws FileNotFoundException, EmptyFileException, NoRightsException {
         try {
-            String path = "src/main/java/com/example/files/" + name;
-            if (!Files.isReadable(Paths.get(path))) {
+            if (!Files.isReadable(Paths.get(name))) {
                 throw new NoRightsException();
             }
-            Scanner scanner = new Scanner(new File(path));
+            Scanner scanner = new Scanner(new File(name));
             if (!scanner.hasNext()) {
                 throw new EmptyFileException();
             }
@@ -102,7 +101,7 @@ public class FileRegister {
             throw new WrongNumberException();
         }
         try {
-            ArrayList<Movie> movies = parseObjects(fields, 1);
+            ArrayList<Movie> movies = parseObjects(fields);
             for (Movie movie : movies) {
                 collectionRegister.push(movie);
             }
@@ -137,7 +136,7 @@ public class FileRegister {
 
     public void writeCsv() throws FileNotFoundException {
         try {
-            this.writer = new PrintWriter(new File("src/main/java/com/example/files/" + fileName));
+            this.writer = new PrintWriter(new File(fileName));
         }
         catch (FileNotFoundException e) {
             throw new FileNotFoundException("Файл не найден, запись невозможна!");
@@ -167,16 +166,24 @@ public class FileRegister {
         writer.close();
     }
 
-    private ArrayList<Movie> parseObjects(ArrayList<String> fields, int index) throws WrongFieldException {
+    private ArrayList<Movie> parseObjects(ArrayList<String> fields) throws WrongFieldException {
         try {
             ArrayList<Movie> movies = new ArrayList<>();
+            int index = 0;
+            List<String> headers = List.of(("movie_name,coordinate_x,coordinate_y,date,oscars,total_box,movie_genre," +
+                    "mpaa_rating,person_name,person_height,person_nationality,location_x," +
+                    "location_y,location_z").split(","));
+            if (fields.subList(0, fieldCount).equals(headers)){
+                index = 1;
+            }
             for (int i = index; i < fields.size() / fieldCount; i++) {
                 try {
                     movies.add(parseObject(fields.subList(i * fieldCount, (i + 1) * fieldCount)));
                 }
                 catch (WrongFieldException e) {
-                    throw new WrongFieldException(e.getMessage() + (index == 1 ? " на " + i + " строке файла" +
-                            ", считывание файла невозможно": ""));}
+                    throw new WrongFieldException(e.getMessage() + " на " + (i + 1) + " строке файла" +
+                            ", считывание файла невозможно");
+                }
             }
             return movies;
         }
@@ -346,7 +353,7 @@ public class FileRegister {
     private Location getLocation(String x, String y, String z) throws WrongFieldException {
         long X;
         int Y;
-        Double Z;
+        double Z;
         try {
             X = Long.parseLong(x);
         }

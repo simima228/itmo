@@ -1,9 +1,9 @@
 package com.example.models;
 
 public class Location {
-    private long x;
-    private int y;
-    private double z;
+    private final long x;
+    private final int y;
+    private final double z;
 
     public Location(long x, int y, double z) {
         this.x = x;

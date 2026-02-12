@@ -2,13 +2,11 @@ package com.example.commands;
 
 import com.example.console.Console;
 import com.example.etc.CommandStatus;
-import com.example.models.Movie;
 import com.example.registers.CollectionRegister;
-import com.example.registers.ObjectRegister;
 
 public class RemoveById extends BaseCommand {
-    private Console console;
-    private CollectionRegister collectionRegister;
+    private final Console console;
+    private final CollectionRegister collectionRegister;
 
     public RemoveById(Console console, CollectionRegister collectionRegister) {
         super("remove_by_id","remove_by_id id", "удалить элемент из коллекции по его id");

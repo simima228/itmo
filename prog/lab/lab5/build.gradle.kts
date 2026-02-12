@@ -8,7 +8,7 @@ java {
 }
 
 group = "org.example"
-version = "1.0-SNAPSHOT"
+version = ""
 
 repositories {
     mavenCentral()
@@ -22,3 +22,4 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+

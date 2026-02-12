@@ -5,7 +5,7 @@ import com.example.etc.ConsoleInterface;
 import java.util.Scanner;
 
 public class Console implements ConsoleInterface {
-    Scanner scanner = new Scanner(System.in);
+    Scanner scanner;
 
     @Override
     public void println(Object obj) {
@@ -22,7 +22,15 @@ public class Console implements ConsoleInterface {
         return scanner.nextLine();
     }
 
+    public void setScanner(Scanner scanner) {
+        this.scanner = scanner;
+    }
 
+    public Scanner getScanner() {
+        return scanner;
+    }
 
-
+    public void setDefaultScanner(){
+        scanner = new Scanner(System.in);
+    }
 }

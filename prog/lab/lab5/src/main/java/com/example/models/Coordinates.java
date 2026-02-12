@@ -1,8 +1,8 @@
 package com.example.models;
 
 public class Coordinates {
-    private Float x; //Поле не может быть null
-    private long y;
+    private final Float x; //Поле не может быть null
+    private final long y;
 
     public Coordinates(Float x, long y) {
         this.x = x;

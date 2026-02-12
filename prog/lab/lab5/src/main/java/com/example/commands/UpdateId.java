@@ -7,9 +7,9 @@ import com.example.registers.CollectionRegister;
 import com.example.registers.ObjectRegister;
 
 public class UpdateId extends BaseCommand {
-    private Console console;
-    private ObjectRegister objectRegister;
-    private CollectionRegister collectionRegister;
+    private final Console console;
+    private final ObjectRegister objectRegister;
+    private final CollectionRegister collectionRegister;
 
     public UpdateId(Console console, ObjectRegister objectRegister, CollectionRegister collectionRegister) {
         super("update_id", "update_id {element}", "обновить значение" +

@@ -5,8 +5,8 @@ import com.example.etc.CommandStatus;
 import com.example.registers.CollectionRegister;
 
 public class Show extends BaseCommand {
-    private Console console;
-    private CollectionRegister collectionRegister;
+    private final Console console;
+    private final CollectionRegister collectionRegister;
 
     public Show(Console console, CollectionRegister collectionRegister) {
         super("show", "show", "вывести в стандартный" +

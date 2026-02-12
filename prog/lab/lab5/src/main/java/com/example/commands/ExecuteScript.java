@@ -4,7 +4,7 @@ import com.example.console.Console;
 import com.example.etc.CommandStatus;
 
 public class ExecuteScript extends BaseCommand {
-    private Console console;
+    private final Console console;
 
     public ExecuteScript(Console console) {
         super("execute_script", "execute_script file_name",

@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.Stack;
 
 public class CollectionRegister {
-    private LocalDate initialDate;
+    private final LocalDate initialDate;
     private LocalDate changeDate;
-    private Stack<Movie> stack;
+    private final Stack<Movie> stack;
     private int id;
 
     public CollectionRegister() {
@@ -52,10 +52,12 @@ public class CollectionRegister {
         if (stack.isEmpty()){
             return "В коллекции нет элементов!";
         }
+
         StringBuilder sb = new StringBuilder();
         for (Movie movie : stack) {
             sb.append(movie).append("\n");
         }
+
         return sb.substring(0, sb.length() - 1);
     }
     public void setStack(int index, Movie movie) {
@@ -67,12 +69,14 @@ public class CollectionRegister {
 
     public int getIndex(int id){
         int index = -1;
+
         for (Movie movie : stack) {
             if (movie.getId() == id) {
                 index = stack.indexOf(movie);
                 break;
             }
         }
+
         return index;
     }
 
@@ -92,6 +96,7 @@ public class CollectionRegister {
         Stack<Movie> reverseStack = new Stack<>();
         reverseStack.addAll(stack);
         Collections.reverse(reverseStack);
+
         return reverseStack;
     }
 

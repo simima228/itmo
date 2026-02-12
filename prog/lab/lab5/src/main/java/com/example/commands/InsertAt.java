@@ -7,9 +7,9 @@ import com.example.registers.CollectionRegister;
 import com.example.registers.ObjectRegister;
 
 public class InsertAt extends BaseCommand {
-    private Console console;
-    private ObjectRegister objectRegister;
-    private CollectionRegister collectionRegister;
+    private final Console console;
+    private final ObjectRegister objectRegister;
+    private final CollectionRegister collectionRegister;
 
     public InsertAt(Console console, ObjectRegister objectRegister, CollectionRegister collectionRegister) {
         super("insert_at", "insert_at index {element}", "добавить новый элемент в заданную позицию");

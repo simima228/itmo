@@ -7,8 +7,8 @@ import com.example.registers.FileRegister;
 import java.io.FileNotFoundException;
 
 public class Save extends BaseCommand {
-    private Console console;
-    private FileRegister fileRegister;
+    private final Console console;
+    private final FileRegister fileRegister;
 
     public Save(Console console, FileRegister fileRegister) {
         super("save", "save", "сохранить коллекцию в файл");

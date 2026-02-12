@@ -6,8 +6,8 @@ import com.example.registers.HistoryRegister;
 
 
 public class History extends BaseCommand {
-    private HistoryRegister historyRegister;
-    private Console console;
+    private final HistoryRegister historyRegister;
+    private final Console console;
 
     public History(Console console, HistoryRegister historyRegister) {
         super("history", "history", "вывести последние 10 команд (без их аргументов)");

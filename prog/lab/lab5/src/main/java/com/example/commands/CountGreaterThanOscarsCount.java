@@ -6,8 +6,8 @@ import com.example.models.Movie;
 import com.example.registers.CollectionRegister;
 
 public class CountGreaterThanOscarsCount extends BaseCommand {
-    private Console console;
-    private CollectionRegister collectionRegister;
+    private final Console console;
+    private final CollectionRegister collectionRegister;
 
     public CountGreaterThanOscarsCount(Console console, CollectionRegister collectionRegister) {
         super("count_greater_than_oscars_count","count_greater_than_oscars_count oscarsCount" +

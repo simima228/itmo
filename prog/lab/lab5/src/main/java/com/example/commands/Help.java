@@ -4,7 +4,6 @@ import com.example.console.Console;
 import com.example.etc.CommandStatus;
 import com.example.registers.CommandRegister;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Help extends BaseCommand {

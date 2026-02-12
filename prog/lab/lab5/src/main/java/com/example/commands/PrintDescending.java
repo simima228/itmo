@@ -5,8 +5,8 @@ import com.example.etc.CommandStatus;
 import com.example.registers.CollectionRegister;
 
 public class PrintDescending extends BaseCommand {
-    private Console console;
-    private CollectionRegister collectionRegister;
+    private final Console console;
+    private final CollectionRegister collectionRegister;
 
     public PrintDescending(Console console, CollectionRegister collectionRegister) {
         super("print_descending", "print_descending",
