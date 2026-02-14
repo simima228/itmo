@@ -104,14 +104,14 @@ public class Printer {
                     console.println("В скрипте обнаружена рекурсия! Вы уверены, что хотите продолжить? Да/Нет");
                     if ((console.read() + " ").split(" ", 2)[0].trim().equalsIgnoreCase("да")){
                         int i = 1;
-                        String newArgs;
+                        String newArgs = (command + " ").split(" ", 2)[1].trim();
                         while (i < 100){
-                            newArgs = (command + " ").split(" ", 2)[1].trim();
                             boolean flag = false;
                             ArrayList<String> checkCommands = fileRegister.readScript(newArgs);
                             for (String checkCommand : checkCommands) {
                                 if ((checkCommand + " ").split(" ", 2)[0].trim().equals("execute_script")) {
                                     flag = true;
+                                    newArgs = (checkCommand + " ").split(" ", 2)[1].trim();
                                     break;
                                 }
                             }
