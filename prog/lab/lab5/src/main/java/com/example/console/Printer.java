@@ -42,7 +42,7 @@ public class Printer {
                 console.println(e.getMessage());
             }
             catch (NoSuchElementException e) {
-                console.println("В скрипте недостаточно строк для заполнения полей!");
+                console.println("В скрипте недостаточно строк для заполнения полей или Вы нажали ctrl+d!");
                 break;
             }
             catch (StackOverflowError e) {
