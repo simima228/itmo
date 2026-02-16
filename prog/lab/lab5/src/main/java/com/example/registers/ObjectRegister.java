@@ -4,6 +4,9 @@ import com.example.console.Console;
 import com.example.models.*;
 
 import java.time.LocalDate;
+import java.util.NoSuchElementException;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class ObjectRegister {
     public static class Break extends Exception {
@@ -33,325 +36,144 @@ public class ObjectRegister {
         console.println("Хотите ли вы добавить режиссера фильма? Да/Нет: ");
         line = console.read().trim();
         if (line.equalsIgnoreCase("ДА")) {
-            director = createPerson(console);
+            director = createDirector(console);
         } else {
             director = null;
         }
         return new Movie(id, name, coordinates, LocalDate.now(), oscars, totalBox, genre,
                 rating, director);
+    }
+
+
+    private <T> T parseField(Console console, String request, String empty, String success,
+                             Function<String, T> parser, String error, String r1, String r2, Predicate<T> condition,
+    String cond, String enumerate, boolean checkEmpty)
+            throws Break {
+        String line;
+        console.println(request);
+        if (!enumerate.isEmpty()){
+            console.println(enumerate);
         }
+        while (console.getScanner().hasNextLine()) {
+            line = console.read().trim();
+            if (line.equalsIgnoreCase("/exit")) {
+                throw new Break();
+            }
+
+            if (line.isEmpty()){
+                if (!checkEmpty){
+                    return null;
+                }
+                console.println(empty);
+                continue;
+            }
+            try {
+                T result = parser.apply(line.replace(r1, r2));
+                if (condition != null) {
+                    if (!condition.test(result)) {
+                        console.println(cond);
+                        continue;
+                    }
+                }
+                console.println(success);
+                return result;
+            }
+            catch (IllegalArgumentException e) {
+                console.println(error);
+            }
+        }
+        throw new NoSuchElementException();
+    }
+
+
+
 
     private String createMovieName(Console console) throws Break {
-        String line;
-        String name;
-        console.println("Введите название фильма: ");
-        while (true){
-            line = console.read().trim();
-            if (line.equals("/exit")) {
-                throw new Break();
-            }
-            if (line.isEmpty()){
-                console.println("Название фильма не может быть пустым, введите корректное название: ");
-                continue;
-            }
-            name = line;
-            console.println("Название фильма успешно добавлено!");
-            return name;
-        }
-    }
-
-    private Long createOscars(Console console) throws Break {
-        String line;
-        Long oscars;
-        console.println("Введите количество Оскаров (целое число больше нуля): ");
-        while (true){
-            line = console.read().trim();
-            if (line.equals("/exit")) {
-                throw new Break();
-            }
-            if (line.isEmpty()){
-                console.println("Количество Оскаров не может быть пустым, введите корректное число: ");
-                continue;
-            }
-            try {
-                oscars = Long.parseLong(line);
-                if (oscars <= 0){
-                    console.println("Число должно быть положительным, введите корректное число: ");
-                    continue;
-                }
-                console.println("Количество Оскаров успешно добавлено!");
-                return oscars;
-            }
-            catch (NumberFormatException e){
-                console.println("Введите корректное число Оскаров: ");
-            }
-        }
-    }
-
-    private Integer createTotalBox(Console console) throws Break {
-        String line;
-        Integer totalBox;
-        console.println("Введите размер кассовых сборов (целое число больше нуля): ");
-        while (true){
-            line = console.read().trim();
-            if (line.equals("/exit")) {
-                throw new Break();
-            }
-            if (line.isEmpty()){
-                console.println("Размер кассовых сборов не может быть пустым, введите корректное число: ");
-            }
-            try {
-                totalBox = Integer.parseInt(line);
-                if (totalBox <= 0){
-                    console.println("Число должно быть положительным, введите корректное число: ");
-                    continue;
-                }
-                console.println("Кассовые сборы успешно добавлен!");
-                return totalBox;
-            }
-            catch (NumberFormatException e){
-                console.println("Введите корректные кассовые сборы: ");
-            }
-        }
+        return parseField(console, "Введите название фильма: ",
+                "Название фильма не может быть пустым, введите корректное название: ",
+                "Название фильма успешно добавлено!", Function.identity(), "", "", "",
+                null, "", "", true);
     }
 
     private Coordinates createCoordinates(Console console) throws Break {
-        String line;
-        Float x;
-        long y;
-        console.println("Создание координат...");
-        console.println("Введите координату x в формате числа с плавающей точкой: ");
-        while (true){
-            line = console.read().trim();
-            if (line.equals("/exit")) {
-                throw new Break();
-            }
-            if (line.isEmpty()){
-                console.println("Координата x не может быть пустой, введите корректное число: ");
-                continue;
-            }
-            try {
-                x = Float.parseFloat(line.replace(",", "."));
-                console.println("Координата x успешно добавлена!");
-                break;
-            }
-            catch (NumberFormatException e){
-                console.println("Введите корректное число: ");
-            }
-        }
-        console.println("Введите координату y в формате целого числа: ");
-        while (true){
-            line = console.read().trim();
-            if (line.equals("/exit")) {
-                throw new Break();
-            }
-            if (line.isEmpty()){
-                console.println("Координата y не может быть пустой, введите корректное число: ");
-                continue;
-            }
-            try {
-                y = Long.parseLong(line);
-                console.println("Координата y успешно добавлена!");
-                break;
-            }
-            catch (NumberFormatException e){
-                console.println("Введите корректное число: ");
-            }
-        }
-        console.println("Координаты успешно добавлены!");
-        return new Coordinates(x, y);
+        return new Coordinates(parseField(console,
+                "Введите координату x в формате числа с плавающей точкой: ",
+                "Координата x не может быть пустой, введите корректное число: ",
+                "Координата x успешно добавлена!",
+                Float::parseFloat,"Введите корректное число: ", ",", ".", null, "", "", true),
+                parseField(console,
+                        "Введите координату y в формате целого числа: ",
+                        "Координата y не может быть пустой, введите корректное число: ",
+                        "Координата y успешно добавлена!",
+                        Long::parseLong,"Введите корректное число: ", ",", ".", null, "", "", true));
+
+    }
+
+    private Long createOscars(Console console) throws Break {
+        return parseField(console, "Введите количество Оскаров (целое число больше нуля): ",
+                "Количество Оскаров не может быть пустым, введите корректное число: ",
+                "Количество Оскаров успешно добавлено!",
+                Long::parseLong, "Введите корректное число Оскаров: ", "", "", x -> x > 0,
+                "Число должно быть положительным, введите корректное число: ", "", true);
+    }
+
+    private Integer createTotalBox(Console console) throws Break {
+        return parseField(console, "Введите размер кассовых сборов (целое число больше нуля): ",
+                "Размер кассовых сборов не может быть пустым, введите корректное число: ",
+                "Кассовые сборы успешно добавлен!",
+                Integer::parseInt, "Введите корректные кассовые сборы: ", "", "", x -> x > 0,
+                "Число должно быть положительным, введите корректное число: ", "", true);
     }
 
     private MovieGenre createGenre(Console console) throws Break {
-        String line;
-        MovieGenre genre;
-        console.println("Введите жанр фильма (если его нет, нажмите Enter)");
-        console.println(MovieGenre.getGenre());
-        while (true) {
-            line = console.read().trim();
-            if (line.equals("/exit")) {
-                throw new Break();
-            }
-            if (line.isEmpty()) {
-                return null;
-            }
-            try {
-                genre = MovieGenre.valueOf(line.toUpperCase());
-                console.println("Жанр успешно добавлен!");
-                return genre;
-            }
-            catch (IllegalArgumentException e){
-                console.println("Введите корректный жанр: ");
-            }
-        }
+        return parseField(console,
+                "Введите жанр фильма (если его нет, нажмите Enter)",
+                "", "Жанр успешно добавлен!", x -> MovieGenre.valueOf(x.toUpperCase()),
+                "Введите корректный жанр: ", "", "", null, "", MovieGenre.getGenre(),
+                false);
     }
 
     private MpaaRating createRating(Console console) throws Break {
-        String line;
-        MpaaRating rating;
-        console.println("Введите MPAA рейтинг фильма (если его нет, нажмите Enter)");
-        console.println(MpaaRating.getRatings());
-        while (true) {
-            line = console.read().trim();
-            if (line.equals("/exit")) {
-                throw new Break();
-            }
-            if (line.isEmpty()) {
-                return null;
-            }
-            try {
-                rating = MpaaRating.valueOf(line.toUpperCase());
-                console.println("MPAA рейтинг успешно добавлен!");
-                return rating;
-            }
-            catch (IllegalArgumentException e){
-                console.println("Введите корректный MPAA рейтинг: ");
-            }
-        }
+        return parseField(console, "Введите MPAA рейтинг фильма (если его нет, нажмите Enter)",
+                "", "MPAA рейтинг успешно добавлен!", x -> MpaaRating.valueOf(x.toUpperCase()),
+                "Введите корректный MPAA рейтинг: ", "", "", null, "", MpaaRating.getRatings(),
+                false);
     }
 
-    private Person createPerson(Console console) throws Break {
-        return new Person(createPersonName(console), createPersonHeight(console), createPersonCountry(console),
-                createPersonLocation(console));
+    private Person createDirector(Console console) throws Break {
+        return new Person(
+                parseField(console, "Введите имя человека: ",
+                        "У человека не может быть имени, введите корректное имя: ",
+                        "Имя успешно добавлено!",
+                        Function.identity(), "", "", "", null, "", "",
+                        true),
+                parseField(console, "Введите его рост (целое число больше нуля): ",
+                        "У человека не может не быть роста, введите корректный рост: ",
+                        "Рост успешно добавлен!",
+                        Integer::parseInt, "Введите корректный рост: ", "", "",
+                        x -> x > 0, "Число должно быть положительным, введите корректное число: ",
+                        "", true),
+                parseField(console, "Введите его национальность: ",
+                        "У человека не может не быть национальности, введите корректную страну: ",
+                        "Национальность успешно добавлена!",
+                        x -> Country.valueOf(x.toUpperCase()), "Введите корректную национальность: ",
+                        "", "", null, "", Country.getCountry(), true),
+                new Location(
+                        parseField(console, "Введите координату x в формате целого числа: ",
+                                "Координата x не может быть пустой, введите корректное число: ",
+                                "Координата x успешно добавлена!",
+                                Long::parseLong, "Введите корректное число: ", "", "", null,
+                                "", "", true),
+                        parseField(console, "Введите координату y в формате целого числа: ",
+                                "Координата y не может быть пустой, введите корректное число: ",
+                                "Координата y успешно добавлена!",
+                                Integer::parseInt, "Введите корректное число: ", "", "", null,
+                                "", "", true),
+                        parseField(console, "Введите координату z в формате числа с плавающей точкой: ",
+                                "Координата z не может быть пустой, введите корректное число: ",
+                                "Координата z успешно добавлена!",
+                                Double::parseDouble, "Введите корректное число: ", ",", ".", null,
+                                "", "", true)));
     }
 
-    private String createPersonName(Console console) throws Break {
-        String line;
-        String name;
-        console.println("Введите имя человека: ");
-        while (true){
-            line = console.read().trim();
-            if (line.equals("/exit")) {
-                throw new Break();
-            }
-            if (line.isEmpty()){
-                console.println("У человека не может быть имени, введите корректное имя: ");
-                continue;
-            }
-            name = line;
-            console.println("Имя успешно добавлено!");
-            return name;
-        }
-    }
-
-    private int createPersonHeight(Console console) throws Break {
-        String line;
-        int height;
-        console.println("Введите его рост (целое число больше нуля): ");
-        while (true){
-            line = console.read().trim();
-            if (line.equals("/exit")) {
-                throw new Break();
-            }
-            if (line.isEmpty()){
-                console.println("У человека не может не быть роста, введите корректный рост: ");
-                continue;
-            }
-            try {
-                height = Integer.parseInt(line);
-                if (height <= 0){
-                    console.println("Число должно быть положительным, введите корректное число: ");
-                    continue;
-                }
-                console.println("Рост успешно добавлен!");
-                return height;
-            }
-            catch (NumberFormatException e){
-                console.println("Введите корректный рост: ");
-            }
-        }
-    }
-
-    private Country createPersonCountry(Console console) throws Break {
-        String line;
-        Country nationality;
-        console.println("Введите его национальность: ");
-        console.println(Country.getCountry());
-        while (true) {
-            line = console.read().trim();
-            if (line.equals("/exit")) {
-                throw new Break();
-            }
-            if (line.isEmpty()) {
-                console.println("У человека не может не быть национальности, введите корректную страну: ");
-                continue;
-            }
-            try {
-                nationality = Country.valueOf(line.toUpperCase());
-                console.println("Национальность успешно добавлена!");
-                return nationality;
-            }
-            catch (IllegalArgumentException e){
-                console.println("Введите корректную национальность: ");
-            }
-        }
-    }
-
-    private Location createPersonLocation(Console console) throws Break {
-        String line;
-        long x;
-        int y;
-        double z;
-        console.println("Создание локации...");
-        console.println("Введите координату x в формате целого числа: ");
-        while (true){
-            line = console.read().trim();
-            if (line.equals("/exit")) {
-                throw new Break();
-            }
-            if (line.isEmpty()){
-                console.println("Координата x не может быть пустой, введите корректное число: ");
-                continue;
-            }
-            try {
-                x = Long.parseLong(line);
-                console.println("Координата x успешно добавлена!");
-                break;
-            }
-            catch (NumberFormatException e){
-                console.println("Введите корректное число: ");
-            }
-        }
-        console.println("Введите координату y в формате целого числа: ");
-        while (true){
-            line = console.read().trim();
-            if (line.equals("/exit")) {
-                throw new Break();
-            }
-            if (line.isEmpty()){
-                console.println("Координата y не может быть пустой, введите корректное число: ");
-                continue;
-            }
-            try {
-                y = Integer.parseInt(line);
-                console.println("Координата y успешно добавлена!");
-                break;
-            }
-            catch (NumberFormatException e){
-                console.println("Введите корректное число: ");
-            }
-        }
-        console.println("Координаты успешно добавлены!");
-        console.println("Введите координату z в формате числа с плавающей точкой: ");
-        while (true){
-            line = console.read().trim();
-            if (line.equals("/exit")) {
-                throw new Break();
-            }
-            if (line.isEmpty()){
-                console.println("Координата z не может быть пустой, введите корректное число: ");
-                continue;
-            }
-            try {
-                z = Double.parseDouble(line.replace(",", "."));
-                console.println("Координата z успешно добавлена!");
-                break;
-            }
-            catch (NumberFormatException e){
-                console.println("Введите корректное число: ");
-            }
-        }
-        console.println("Координаты успешно добавлены!");
-        return new Location(x, y, z);
-    }
 }
