@@ -68,18 +68,6 @@ public class Movie implements Comparable<Movie> {
         return director;
     }
 
-    public static boolean checkOscars(Long count) {
-        return count != null && count > 0;
-    }
-
-    public static boolean checkName(String checkName) {
-        return checkName != null && !checkName.isEmpty();
-    }
-
-    public static boolean checkTotalBox(Integer box) {
-        return box != null && box > 0;
-    }
-
     @Override
     public String toString(){
         return "Фильм" + ": " + "[" +
