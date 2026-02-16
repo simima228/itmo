@@ -45,10 +45,6 @@ public class Printer {
                 console.println("В скрипте недостаточно строк для заполнения полей или Вы нажали ctrl+d!");
                 break;
             }
-            catch (StackOverflowError e) {
-                console.println("Превышена глубина рекурсии.");
-                console.setDefaultScanner();
-            }
         }
 
     }
