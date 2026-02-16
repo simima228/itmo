@@ -25,7 +25,9 @@ public class Printer {
 
     public void run(boolean script) {
         while (!script || console.getScanner().hasNextLine()) {
-            console.println("Введите команду: ");
+            if (!script){
+                console.println("Введите команду: ");
+            }
             try {
                 String[] command = (console.read() + " ").split(" ", 2);
                 String status = executeCommand(command, script);
@@ -42,12 +44,8 @@ public class Printer {
                 console.println(e.getMessage());
             }
             catch (NoSuchElementException e) {
-                console.println("В скрипте недостаточно строк для заполнения полей!");
+                console.println("В скрипте недостаточно строк для заполнения полей или вы нажали ctrl+d!");
                 break;
-            }
-            catch (StackOverflowError e) {
-                console.println("Превышена глубина рекурсии.");
-                console.setDefaultScanner();
             }
         }
 
@@ -104,14 +102,14 @@ public class Printer {
                     console.println("В скрипте обнаружена рекурсия! Вы уверены, что хотите продолжить? Да/Нет");
                     if ((console.read() + " ").split(" ", 2)[0].trim().equalsIgnoreCase("да")){
                         int i = 1;
-                        String newArgs;
+                        String newArgs = (command + " ").split(" ", 2)[1].trim();
                         while (i < 100){
-                            newArgs = (command + " ").split(" ", 2)[1].trim();
                             boolean flag = false;
                             ArrayList<String> checkCommands = fileRegister.readScript(newArgs);
                             for (String checkCommand : checkCommands) {
                                 if ((checkCommand + " ").split(" ", 2)[0].trim().equals("execute_script")) {
                                     flag = true;
+                                    newArgs = (checkCommand + " ").split(" ", 2)[1].trim();
                                     break;
                                 }
                             }

@@ -19,6 +19,6 @@ public class ExecuteScript extends BaseCommand {
         if (args[1].trim().isEmpty()){
             return wrongUsage();
         }
-        return super.execute(args);
+        return new CommandStatus(true, "Скрипт выполнен успешно!");
     }
 }

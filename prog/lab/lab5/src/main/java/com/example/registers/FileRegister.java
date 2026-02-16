@@ -139,7 +139,7 @@ public class FileRegister {
             this.writer = new PrintWriter(new File(fileName));
         }
         catch (FileNotFoundException e) {
-            throw new FileNotFoundException("Файл не найден, запись невозможна!");
+            throw new FileNotFoundException("Файл не найден или нет прав на запись, запись невозможна!");
         }
         writer.println("movie_name,coordinate_x," +
                 "coordinate_y,date,oscars,total_box,movie_genre," +
@@ -261,7 +261,7 @@ public class FileRegister {
         long osc;
         try {
             osc = Long.parseLong(line);
-            if (!Movie.checkOscars(osc)){
+            if (osc <= 0){
                 throw new WrongFieldException("Указано некорректное количество Оскаров");
             }
         }
@@ -275,7 +275,7 @@ public class FileRegister {
         int totalBox;
         try {
             totalBox = Integer.parseInt(line);
-            if (!Movie.checkTotalBox(totalBox)){
+            if (totalBox <= 0){
                 throw new WrongFieldException("Указано некорректное количество кассовых сборов");
             }
         }
@@ -331,7 +331,7 @@ public class FileRegister {
         int height;
         try {
             height = Integer.parseInt(line);
-            if (!Person.checkHeight(height)){
+            if (height <= 0){
                 throw new WrongFieldException("Указан рост меньший 1");
             }
         }

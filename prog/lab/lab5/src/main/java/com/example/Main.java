@@ -23,7 +23,6 @@ public class Main {
         }
 
         FileRegister fileRegister = new FileRegister(args[0].trim(), console, collectionRegister);
-
         try {
             fileRegister.readCsv();
         }
