@@ -13,22 +13,6 @@ public class Person {
         this.location = location;
     }
 
-    public static boolean checkName(String checkName){
-        return checkName != null && !checkName.isEmpty();
-    }
-
-    public static boolean checkHeight(int checkHeight){
-        return checkHeight > 0;
-    }
-
-    public static boolean checkNationality(Country checkNationality){
-        return checkNationality != null;
-    }
-
-    public static boolean checkLocation(Location checkLocation){
-        return checkLocation != null;
-    }
-
     public String getName() {
         return name;
     }
