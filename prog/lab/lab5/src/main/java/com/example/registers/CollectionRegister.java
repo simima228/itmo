@@ -27,6 +27,10 @@ public class CollectionRegister {
         return id;
     }
 
+    public void reduceId(){
+        id--;
+    }
+
     public void push(Movie movie) {
         stack.push(movie);
         setChangeDate(LocalDate.now());

@@ -26,6 +26,7 @@ public class Add extends BaseCommand{
             return super.execute(args);
         }
         catch (ObjectRegister.Break e) {
+            collectionRegister.reduceId();
             return new CommandStatus(false, e.getMessage());
         }
     }
