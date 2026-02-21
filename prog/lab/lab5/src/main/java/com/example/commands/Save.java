@@ -29,7 +29,7 @@ public class Save extends BaseCommand {
             return new CommandStatus(true, "Команда выполнена успешно!");
         }
         catch (FileNotFoundException e){
-            return new CommandStatus(false, "Во время выполнения произошла ошибка.");
+            return new CommandStatus(false, "Произошла ошибка, на запись в файл нет прав!");
         }
     }
 }
