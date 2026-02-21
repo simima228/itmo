@@ -2,10 +2,11 @@ package com.example.console;
 
 import com.example.etc.ConsoleInterface;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Console implements ConsoleInterface {
-    Scanner scanner;
+    ArrayList<Scanner> scanners = new ArrayList<>();
 
     @Override
     public void println(Object obj) {
@@ -19,18 +20,22 @@ public class Console implements ConsoleInterface {
 
     @Override
     public String read() {
-        return scanner.nextLine();
+        return scanners.get(scanners.size() - 1).nextLine();
     }
 
-    public void setScanner(Scanner scanner) {
-        this.scanner = scanner;
+    public void addScanner(Scanner scanner) {
+        this.scanners.add(scanner);
     }
 
     public Scanner getScanner() {
-        return scanner;
+        return scanners.get(scanners.size() - 1);
     }
 
-    public void setDefaultScanner(){
-        scanner = new Scanner(System.in);
+    public Scanner removeScanner() {
+        return scanners.remove(scanners.size() - 1);
+    }
+
+    public void initializeScanner() {
+        scanners.add(new Scanner(System.in));
     }
 }
