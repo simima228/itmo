@@ -45,135 +45,171 @@ public class ObjectRegister {
     }
 
 
-    private <T> T parseField(Console console, String request, String empty, String success,
-                             Function<String, T> parser, String error, String r1, String r2, Predicate<T> condition,
-    String cond, String enumerate, boolean checkEmpty)
+    private String parseField(Console console)
             throws Break {
         String line;
-        console.println(request);
-        if (!enumerate.isEmpty()){
-            console.println(enumerate);
+        line = console.read().trim();
+        if (line.equalsIgnoreCase("/exit")) {
+            throw new Break();
         }
-        while (console.getScanner().hasNextLine()) {
-            line = console.read().trim();
-            if (line.equalsIgnoreCase("/exit")) {
-                throw new Break();
-            }
+        if (line.isEmpty()){
+            return null;
+        }
+        return line;
+    }
 
-            if (line.isEmpty()){
-                if (!checkEmpty){
+    private <T extends Enum<T>> T parseEnum(Console console, String request, String error,
+                                            String emptyError, String success, String enumerate,
+                                            Class<T> enumClass, boolean emptyCheck) throws Break {
+        String line;
+        T enumValue;
+        console.println(request);
+        console.println(enumerate);
+        while (console.getScanner().hasNextLine()) {
+            line = parseField(console);
+            if (line != null) {
+                try {
+                    enumValue = Enum.valueOf(enumClass, line.toUpperCase());
+                    console.println(success);
+                    return enumValue;
+                }
+                catch (IllegalArgumentException e) {
+                    console.println(error);
+                }
+            }
+            else {
+                if (!emptyCheck) {
                     return null;
                 }
-                console.println(empty);
+                console.println(emptyError);
+            }
+
+        }
+        throw new NoSuchElementException();
+    }
+
+    private String parseString(Console console, String request, String emptyError,
+                               String success) throws Break {
+        String line;
+        console.println(request);
+        while (console.getScanner().hasNextLine()) {
+            line = parseField(console);
+            if (line == null){
+                console.println(emptyError);
+                continue;
+            }
+            console.println(success);
+            return line;
+        }
+        throw new NoSuchElementException();
+    }
+
+    private <T extends Number> T parseNumber(Console console, String request, String emptyError,
+                                             String success, Function<String, T> parser, Predicate<T> validator,
+                                             String validationError) throws Break {
+        String line;
+        T number;
+        console.println(request);
+        while (console.getScanner().hasNextLine()) {
+            line = parseField(console);
+            if (line == null){
+                console.println(emptyError);
                 continue;
             }
             try {
-                T result = parser.apply(line.replace(r1, r2));
-                if (condition != null) {
-                    if (!condition.test(result)) {
-                        console.println(cond);
+                number = parser.apply(line.replace(",", "."));
+                if (validator != null){
+                    if (!validator.test(number)){
+                        console.println(validationError);
                         continue;
                     }
                 }
                 console.println(success);
-                return result;
+                return number;
             }
-            catch (IllegalArgumentException e) {
-                console.println(error);
+            catch (NumberFormatException e) {
+                console.println("Введите корректное число: ");
             }
         }
         throw new NoSuchElementException();
     }
 
-
-
-
     private String createMovieName(Console console) throws Break {
-        return parseField(console, "Введите название фильма: ",
+        return parseString(console, "Введите название фильма: ",
                 "Название фильма не может быть пустым, введите корректное название: ",
-                "Название фильма успешно добавлено!", Function.identity(), "", "", "",
-                null, "", "", true);
+                "Название фильма успешно добавлено!");
     }
 
     private Coordinates createCoordinates(Console console) throws Break {
-        return new Coordinates(parseField(console,
-                "Введите координату x в формате числа с плавающей точкой: ",
-                "Координата x не может быть пустой, введите корректное число: ",
-                "Координата x успешно добавлена!",
-                Float::parseFloat,"Введите корректное число: ", ",", ".", null, "", "", true),
-                parseField(console,
-                        "Введите координату y в формате целого числа: ",
-                        "Координата y не может быть пустой, введите корректное число: ",
-                        "Координата y успешно добавлена!",
-                        Long::parseLong,"Введите корректное число: ", ",", ".", null, "", "", true));
-
+        String request = "Введите координату %s в формате ";
+        String emptyError = "Координата %s не может быть пустой, введите корректное число: ";
+        String success = "Координата %s успешно добавлена!";
+        Float x = parseNumber(console, String.format(request, "x") + "числа с плавающей точкой: ",
+                String.format(emptyError, "x"), String.format(success, "x"),
+                Float::parseFloat, null, "");
+        long y = parseNumber(console, String.format(request, "y") + "целого числа: ",
+                String.format(emptyError, "y"), String.format(success, "y"),
+                Long::parseLong, null, "");
+        return new Coordinates(x, y);
     }
 
     private Long createOscars(Console console) throws Break {
-        return parseField(console, "Введите количество Оскаров (целое число больше нуля): ",
+        return parseNumber(console, "Введите количество Оскаров (целое число больше нуля): ",
                 "Количество Оскаров не может быть пустым, введите корректное число: ",
                 "Количество Оскаров успешно добавлено!",
-                Long::parseLong, "Введите корректное число Оскаров: ", "", "", x -> x > 0,
-                "Число должно быть положительным, введите корректное число: ", "", true);
+                Long::parseLong, x -> x > 0,
+                "Число должно быть положительным, введите корректное число: ");
     }
 
     private Integer createTotalBox(Console console) throws Break {
-        return parseField(console, "Введите размер кассовых сборов (целое число больше нуля): ",
+        return parseNumber(console, "Введите размер кассовых сборов (целое число больше нуля): ",
                 "Размер кассовых сборов не может быть пустым, введите корректное число: ",
-                "Кассовые сборы успешно добавлен!",
-                Integer::parseInt, "Введите корректные кассовые сборы: ", "", "", x -> x > 0,
-                "Число должно быть положительным, введите корректное число: ", "", true);
+                "Кассовые сборы успешно добавлены!",
+                Integer::parseInt, x -> x > 0,
+                "Число должно быть положительным, введите корректное число: ");
     }
 
     private MovieGenre createGenre(Console console) throws Break {
-        return parseField(console,
-                "Введите жанр фильма (если его нет, нажмите Enter)",
-                "", "Жанр успешно добавлен!", x -> MovieGenre.valueOf(x.toUpperCase()),
-                "Введите корректный жанр: ", "", "", null, "", MovieGenre.getGenre(),
-                false);
+        return parseEnum(console, "Введите жанр фильма (если его нет, нажмите Enter)",
+                "Введите корректный жанр: ", "",
+                "Жанр успешно добавлен!",
+                MovieGenre.getGenre(), MovieGenre.class, false);
     }
 
     private MpaaRating createRating(Console console) throws Break {
-        return parseField(console, "Введите MPAA рейтинг фильма (если его нет, нажмите Enter)",
-                "", "MPAA рейтинг успешно добавлен!", x -> MpaaRating.valueOf(x.toUpperCase()),
-                "Введите корректный MPAA рейтинг: ", "", "", null, "", MpaaRating.getRatings(),
-                false);
+        return parseEnum(console, "Введите MPAA рейтинг фильма (если его нет, нажмите Enter)",
+                "Введите корректный MPAA рейтинг: ", "",
+                "MPAA рейтинг успешно добавлен!",
+                MpaaRating.getRatings(), MpaaRating.class, false);
     }
 
     private Person createDirector(Console console) throws Break {
-        return new Person(
-                parseField(console, "Введите имя человека: ",
-                        "У человека не может быть имени, введите корректное имя: ",
-                        "Имя успешно добавлено!",
-                        Function.identity(), "", "", "", null, "", "",
-                        true),
-                parseField(console, "Введите его рост (целое число больше нуля): ",
-                        "У человека не может не быть роста, введите корректный рост: ",
-                        "Рост успешно добавлен!",
-                        Integer::parseInt, "Введите корректный рост: ", "", "",
-                        x -> x > 0, "Число должно быть положительным, введите корректное число: ",
-                        "", true),
-                parseField(console, "Введите его национальность: ",
-                        "У человека не может не быть национальности, введите корректную страну: ",
-                        "Национальность успешно добавлена!",
-                        x -> Country.valueOf(x.toUpperCase()), "Введите корректную национальность: ",
-                        "", "", null, "", Country.getCountry(), true),
-                new Location(
-                        parseField(console, "Введите координату x в формате целого числа: ",
-                                "Координата x не может быть пустой, введите корректное число: ",
-                                "Координата x успешно добавлена!",
-                                Long::parseLong, "Введите корректное число: ", "", "", null,
-                                "", "", true),
-                        parseField(console, "Введите координату y в формате целого числа: ",
-                                "Координата y не может быть пустой, введите корректное число: ",
-                                "Координата y успешно добавлена!",
-                                Integer::parseInt, "Введите корректное число: ", "", "", null,
-                                "", "", true),
-                        parseField(console, "Введите координату z в формате числа с плавающей точкой: ",
-                                "Координата z не может быть пустой, введите корректное число: ",
-                                "Координата z успешно добавлена!",
-                                Double::parseDouble, "Введите корректное число: ", ",", ".", null,
-                                "", "", true)));
+        String name = parseString(console, "Введите имя человека: ",
+                "У человека не может не быть имени, введите корректное имя: ",
+                "Имя успешно добавлено!");
+        Integer age = parseNumber(console, "Введите его рост (целое число больше нуля): ",
+                "У человека не может не быть роста, введите корректный рост: ",
+                "Рост успешно добавлен!", Integer::parseInt, x -> x > 0,
+                "Число должно быть положительным, введите корректное число: ");
+        Country nationality = parseEnum(console, "Введите его национальность: ",
+                "Введите корректную национальность: ",
+                "У человека не может не быть национальности, введите корректную страну: ",
+                "Национальность успешно добавлена!",
+                Country.getCountry(), Country.class, true);
+        String request = "Введите координату %s в формате ";
+        String emptyError = "Координата локации %s не может быть пустой, введите корректное число: ";
+        String success = "Координата локации %s успешно добавлена!";
+        Long x = parseNumber(console, String.format(request, "x") + "целого числа: ",
+                String.format(emptyError, "x"), String.format(success, "x"),
+                Long::parseLong, null, "");
+        Integer y = parseNumber(console, String.format(request, "y") + "целого числа: ",
+                String.format(emptyError, "y"), String.format(success, "y"),
+                Integer::parseInt, null, "");
+        Double z = parseNumber(console, String.format(request, "z") + "числа с плавающей точкой: ",
+                String.format(emptyError, "z"), String.format(success, "z"),
+                Double::parseDouble, null, "");
+        return new Person(name, age, nationality, new Location(x, y, z));
     }
+
 
 }
