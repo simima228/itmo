@@ -43,12 +43,6 @@ public class FileRegister {
         }
     }
 
-    public static class NoRightsException extends Exception {
-        @Override
-        public String getMessage() {
-            return "\nК файлу нет доступа или он не существует.\n";
-        }
-    }
 
     public FileRegister(String fileName, Console console, CollectionRegister collectionRegister) {
         this.console = console;
@@ -57,10 +51,10 @@ public class FileRegister {
         this.fieldCount = 14;
     }
 
-    public Scanner read(String name) throws FileNotFoundException, EmptyFileException, NoRightsException {
+    public Scanner read(String name) throws FileNotFoundException, EmptyFileException{
         try {
             if (!Files.isReadable(Paths.get(name))) {
-                throw new NoRightsException();
+                throw new FileNotFoundException("Файла не существует или к нему нет доступа.");
             }
             Scanner scanner = new Scanner(new File(name));
             if (!scanner.hasNext()) {
@@ -72,13 +66,11 @@ public class FileRegister {
             throw new FileNotFoundException("Файл не найден, считывание информации невозможно!");
         } catch (EmptyFileException e) {
             throw new EmptyFileException();
-        } catch (NoRightsException e) {
-            throw new NoRightsException();
         }
     }
 
     public void readCsv() throws FileNotFoundException, WrongNumberException,
-            WrongFieldException, EmptyFileException, NoRightsException {
+            WrongFieldException, EmptyFileException {
         Scanner scanner;
         try {
             scanner = read(fileName);
@@ -88,9 +80,6 @@ public class FileRegister {
         }
         catch (EmptyFileException e) {
             throw new EmptyFileException();
-        }
-        catch (NoRightsException e) {
-            throw new NoRightsException();
         }
         ArrayList<String> fields = new ArrayList<>();
         while (scanner.hasNext()) {
@@ -113,7 +102,7 @@ public class FileRegister {
     }
 
     public ArrayList<String> readScript(String scriptName) throws FileNotFoundException,
-            EmptyFileException, NoRightsException {
+            EmptyFileException {
         ArrayList<String> commands = new ArrayList<>();
         Scanner scanner;
         try {
@@ -125,9 +114,6 @@ public class FileRegister {
         catch (EmptyFileException e) {
                 throw new EmptyFileException();
             }
-        catch (NoRightsException e) {
-                throw new NoRightsException();
-            }
         while (scanner.hasNextLine()) {
             commands.add(scanner.nextLine().trim());
         }
@@ -136,10 +122,10 @@ public class FileRegister {
 
     public void writeCsv() throws FileNotFoundException {
         try {
-            this.writer = new PrintWriter(new File(fileName));
+            this.writer = new PrintWriter(fileName);
         }
         catch (FileNotFoundException e) {
-            throw new FileNotFoundException("Файл не найден, запись невозможна!");
+            throw new FileNotFoundException("Файл не найден или нет прав на запись, запись невозможна!");
         }
         writer.println("movie_name,coordinate_x," +
                 "coordinate_y,date,oscars,total_box,movie_genre," +
@@ -261,7 +247,7 @@ public class FileRegister {
         long osc;
         try {
             osc = Long.parseLong(line);
-            if (!Movie.checkOscars(osc)){
+            if (osc <= 0){
                 throw new WrongFieldException("Указано некорректное количество Оскаров");
             }
         }
@@ -275,7 +261,7 @@ public class FileRegister {
         int totalBox;
         try {
             totalBox = Integer.parseInt(line);
-            if (!Movie.checkTotalBox(totalBox)){
+            if (totalBox <= 0){
                 throw new WrongFieldException("Указано некорректное количество кассовых сборов");
             }
         }
@@ -331,7 +317,7 @@ public class FileRegister {
         int height;
         try {
             height = Integer.parseInt(line);
-            if (!Person.checkHeight(height)){
+            if (height <= 0){
                 throw new WrongFieldException("Указан рост меньший 1");
             }
         }
