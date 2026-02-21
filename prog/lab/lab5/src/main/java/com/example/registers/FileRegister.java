@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.io.PrintWriter;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 
 public class FileRegister {
@@ -180,7 +182,7 @@ public class FileRegister {
 
     public Movie parseObject(List<String> data) throws WrongFieldException {
         try {
-            String movieName = getName(data.get(0));
+            String movieName = parseString(data.get(0), "Указано пустое имя фильма");
             Coordinates coordinates = getCoordinates(data.get(1), data.get(2));
             LocalDate creationDate = getDate(data.get(3));
             Long osc = getOsc(data.get(4));
@@ -209,28 +211,52 @@ public class FileRegister {
         }
     }
 
-    private String getName(String name) throws WrongFieldException {
+    private String parseString(String name, String error) throws WrongFieldException {
         if (name.isEmpty()){
-            throw new WrongFieldException("Указано пустое имя фильма");
+            throw new WrongFieldException(error);
         }
         return name;
     }
 
+    private <T extends Number> T parseNumber(String field, String error, Function<String, T> parser,
+                                            Predicate<T> validator, String validationError) throws WrongFieldException {
+        T num;
+        try{
+            num = parser.apply(field);
+            if (validator != null){
+                if (!validator.test(num)){
+                    throw new WrongFieldException(validationError);
+                }
+
+            }
+            return num;
+        }
+        catch (NumberFormatException e){
+            throw new WrongFieldException(error);
+        }
+
+    }
+
+    private <T extends Enum<T>> T parseEnum(String field, String error, Class<T> enumClass,
+                                            boolean emptyCheck) throws WrongFieldException {
+        if (field.isEmpty()){
+            if (emptyCheck){
+                throw new WrongFieldException(error);
+            }
+            return null;
+        }
+        try{
+            return Enum.valueOf(enumClass, field.toUpperCase());
+        }
+        catch (IllegalArgumentException e){
+            throw new WrongFieldException(error);
+        }
+    }
+
     private Coordinates getCoordinates(String x, String y) throws WrongFieldException {
-        float X;
-        long Y;
-        try {
-            X = Float.parseFloat(x);
-        }
-        catch (NumberFormatException e) {
-            throw new WrongFieldException("Указана некорректная координата X");
-        }
-        try {
-            Y = Long.parseLong(y);
-        }
-        catch (NumberFormatException e) {
-            throw new WrongFieldException("Указана некорректная координата Y");
-        }
+        String error = "Указана некорректная координата %s";
+        float X = parseNumber(x, String.format(error, "X"), Float::parseFloat, null, "");
+        long Y = parseNumber(y, String.format(error, "Y"), Long::parseLong, null, "");
         return new Coordinates(X, Y);
     }
 
@@ -244,69 +270,26 @@ public class FileRegister {
     }
 
     private long getOsc(String line) throws WrongFieldException {
-        long osc;
-        try {
-            osc = Long.parseLong(line);
-            if (osc <= 0){
-                throw new WrongFieldException("Указано некорректное количество Оскаров");
-            }
-        }
-        catch (NumberFormatException e) {
-            throw new WrongFieldException("Указано некорректное количество Оскаров");
-        }
-        return osc;
+        return parseNumber(line, "Указано некорректное количество Оскаров", Long::parseLong, x -> x > 0,
+                "Указано некорректное количество Оскаров");
     }
 
     private int getTotalBoxOffice(String line) throws WrongFieldException {
-        int totalBox;
-        try {
-            totalBox = Integer.parseInt(line);
-            if (totalBox <= 0){
-                throw new WrongFieldException("Указано некорректное количество кассовых сборов");
-            }
-        }
-        catch (NumberFormatException e) {
-            throw new WrongFieldException("Указано некорректное количество кассовых сборов");
-        }
-        return totalBox;
+        return parseNumber(line, "Указано некорректное количество кассовых сборов", Integer::parseInt, x -> x > 0,
+                "Указано некорректное количество кассовых сборов");
     }
 
     private MovieGenre getGenre(String line) throws WrongFieldException {
-        if (!line.isEmpty()){
-            try {
-                return MovieGenre.valueOf(line.toUpperCase());
-            }
-            catch (IllegalArgumentException e) {
-                throw new WrongFieldException("Указан некорректный жанр");
-            }
-        }
-        else {
-            return null;
-        }
+        return parseEnum(line, "Указан некорректный жанр", MovieGenre.class, false);
     }
 
     private MpaaRating getMpaaRating(String line) throws WrongFieldException {
-        if (!line.isEmpty()){
-            try {
-                return MpaaRating.valueOf(line.toUpperCase());
-            }
-            catch (IllegalArgumentException e) {
-                throw new WrongFieldException("Указан некорректный MPAA рейтинг");
-            }
-        }
-        else {
-            return null;
-        }
+        return parseEnum(line, "Указан некорректный MPAA рейтинг", MpaaRating.class, false);
     }
 
     private Person getPerson(String name, String height, String country, String x, String y
     , String z) throws WrongFieldException {
-        try {
-            return new Person(getPersonName(name), getPersonHeight(height), getCountry(country), getLocation(x, y, z));
-        }
-        catch (WrongFieldException e) {
-            throw new WrongFieldException(e.getMessage());
-        }
+        return new Person(getPersonName(name), getPersonHeight(height), getCountry(country), getLocation(x, y, z));
     }
 
     private String getPersonName(String line) throws WrongFieldException {
@@ -314,50 +297,19 @@ public class FileRegister {
     }
 
     private int getPersonHeight(String line) throws WrongFieldException {
-        int height;
-        try {
-            height = Integer.parseInt(line);
-            if (height <= 0){
-                throw new WrongFieldException("Указан рост меньший 1");
-            }
-        }
-        catch (NumberFormatException e) {
-            throw new WrongFieldException("Указан некорректный рост");
-        }
-        return height;
+        return parseNumber(line, "Указан некорректный рост", Integer::parseInt, x -> x > 0,
+                "Указан рост меньший 1");
     }
 
     private Country getCountry(String line) throws WrongFieldException {
-        try {
-            return Country.valueOf(line.toUpperCase());
-        }
-        catch (IllegalArgumentException e) {
-            throw new WrongFieldException("Указана некорректная страна");
-        }
+        return parseEnum(line, "Указана некорректная страна", Country.class, true);
     }
 
     private Location getLocation(String x, String y, String z) throws WrongFieldException {
-        long X;
-        int Y;
-        double Z;
-        try {
-            X = Long.parseLong(x);
-        }
-        catch (NumberFormatException e) {
-            throw new WrongFieldException("Указана некорректная координата X локации");
-        }
-        try {
-            Y = Integer.parseInt(y);
-        }
-        catch (NumberFormatException e) {
-            throw new WrongFieldException("Указана некорректная координата Y локации");
-        }
-        try {
-            Z = Double.parseDouble(z);
-        }
-        catch (NumberFormatException e) {
-            throw new WrongFieldException("Указана некорректная координата Z локации");
-        }
+        String error = "Указана некорректная координата %s локации";
+        long X = parseNumber(x, String.format(error, "X"), Long::parseLong, null, "");
+        int Y = parseNumber(x, String.format(error, "Y"), Integer::parseInt, null, "");
+        double Z = parseNumber(x, String.format(error, "Z"), Double::parseDouble, null, "");
         return new Location(X, Y, Z);
     }
 
