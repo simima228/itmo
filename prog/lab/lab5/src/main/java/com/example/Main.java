@@ -11,7 +11,7 @@ import java.io.FileNotFoundException;
 public class Main {
     public static void main(String[] args) {
         Console console = new Console();
-        console.setDefaultScanner();
+        console.initializeScanner();
         CollectionRegister collectionRegister = new CollectionRegister();
         CommandRegister commandRegister = new CommandRegister();
         ObjectRegister objectRegister = new ObjectRegister();
@@ -23,7 +23,6 @@ public class Main {
         }
 
         FileRegister fileRegister = new FileRegister(args[0].trim(), console, collectionRegister);
-
         try {
             fileRegister.readCsv();
         }
@@ -34,8 +33,7 @@ public class Main {
 
         catch (FileRegister.WrongNumberException |
                FileRegister.WrongFieldException |
-               FileRegister.EmptyFileException |
-                FileRegister.NoRightsException e) {
+               FileRegister.EmptyFileException e) {
             console.println(e.getMessage());
         }
 
@@ -57,7 +55,7 @@ public class Main {
         commandRegister.register(new PrintDescending(console, collectionRegister));
 
         Printer printer = new Printer(console, commandRegister, historyRegister, fileRegister);
-        console.println("Вас приветствует командное приложение MovieManager3000," +
+        console.println("Вас приветствует командное приложение {вставьте сюда название приложения перед сдачей}," +
                 " для ознакомления с командами введите help.");
         printer.run(false);
 
