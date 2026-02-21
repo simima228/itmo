@@ -1,4 +1,5 @@
 package com.example.console;
+import com.example.etc.CommandStatus;
 import com.example.registers.CommandRegister;
 import com.example.registers.FileRegister;
 import com.example.registers.HistoryRegister;
@@ -25,24 +26,29 @@ public class Printer {
 
     public void run(boolean script) {
         while (!script || console.getScanner().hasNextLine()) {
-            console.println("Введите команду: ");
+            if (!script){
+                console.println("Введите команду: ");
+            }
             try {
                 String[] command = (console.read() + " ").split(" ", 2);
                 String status = executeCommand(command, script);
                 if (status.equals("exit")){
-                    console.println("Завершение программы...");
+                    console.println("\nЗавершение программы...");
                     break;
                 }
                 console.println(status);
             } catch (NullPointerException e) {
                 console.println("Некорректная команда! Попробуйте ещё раз.");
             }
-            catch (FileRegister.NoRightsException | FileNotFoundException |
-                    FileRegister.EmptyFileException e){
+            catch (FileNotFoundException | FileRegister.EmptyFileException e){
                 console.println(e.getMessage());
             }
             catch (NoSuchElementException e) {
-                console.println("В скрипте недостаточно строк для заполнения полей или Вы нажали ctrl+d!");
+                if (script){
+                    console.removeScanner();
+                    throw new NoSuchElementException("\nВ скрипте недостаточно строк для заполнения полей или вы нажали ctrl+d!");
+                }
+                console.println("\nВ скрипте недостаточно строк для заполнения полей или вы нажали ctrl+d!");
                 break;
             }
         }
@@ -50,49 +56,53 @@ public class Printer {
     }
 
     public String executeCommand(String[] tempCommand, boolean script) throws
-            FileRegister.NoRightsException, FileNotFoundException, FileRegister.EmptyFileException {
+             FileNotFoundException, FileRegister.EmptyFileException {
         var command = commandRegister.getCommands().get(tempCommand[0]);
         var commandStatus = command.execute(tempCommand);
-        if (commandStatus.getStatus()){
-            historyRegister.addHistory(tempCommand[0]);
-        }
         if (tempCommand[0].equals("execute_script")) {
             try {
                 console.println("Скрипт " + tempCommand[1].trim() + " выполняется...");
-                scriptExecute(tempCommand[1].trim(), script);
-                console.setDefaultScanner();
+                commandStatus = scriptExecute(tempCommand[1].trim(), script);
             }
-            catch (FileNotFoundException | FileRegister.NoRightsException | FileRegister.EmptyFileException e) {
+            catch (FileNotFoundException | FileRegister.EmptyFileException e) {
                 console.println(e.getMessage());
+                return "\nВо время выполнения скрипта произошла ошибка.";
             }
+        }
+        if (commandStatus.getStatus()){
+            historyRegister.addHistory(tempCommand[0]);
         }
         return commandStatus.getMessage();
     }
 
-    private void scriptExecute(String args, boolean script) throws
-            FileRegister.NoRightsException, FileNotFoundException, FileRegister.EmptyFileException {
+    private CommandStatus scriptExecute(String args, boolean script) throws FileNotFoundException,
+            FileRegister.EmptyFileException {
         if (!script){
             if (!checkRecursion(args)){
-                return;
+                return new CommandStatus(false, "Невозможно выполнить скрипт.");
             }
         }
         try {
-            console.setScanner(fileRegister.read(args));
+            console.addScanner(fileRegister.read(args));
         }
         catch (FileRegister.EmptyFileException e) {
             throw new FileRegister.EmptyFileException();
         }
-        catch (FileRegister.NoRightsException e) {
-            throw new FileRegister.NoRightsException();
-        }
         catch (FileNotFoundException e) {
-            throw new FileNotFoundException("Файл не найден, считывание информации невозможно!");
+            throw new FileNotFoundException("\nФайл не найден или к нему нет доступа," +
+                    " считывание информации невозможно!");
         }
-        run(true);
+        try {
+            run(true);
+            console.removeScanner();
+        }
+        catch (NoSuchElementException e) {
+            return new CommandStatus(false,"\nВо время выполнения скрипта произошла ошибка.");
+        }
+        return new CommandStatus(true, "\nСкрипт выполнен успешно!");
     }
 
-    public boolean checkRecursion(String args) throws FileRegister.EmptyFileException,
-            FileRegister.NoRightsException, FileNotFoundException {
+    public boolean checkRecursion(String args) throws FileRegister.EmptyFileException, FileNotFoundException {
         try {
             ArrayList<String> commands = fileRegister.readScript(args);
             for (String command : commands) {
@@ -131,9 +141,6 @@ public class Printer {
         }
         catch (FileRegister.EmptyFileException e) {
             throw new FileRegister.EmptyFileException();
-        }
-        catch (FileRegister.NoRightsException e) {
-            throw new FileRegister.NoRightsException();
         }
         catch (FileNotFoundException e) {
             throw new FileNotFoundException("Файл не найден, считывание информации невозможно!");
