@@ -26,10 +26,6 @@ public class Movie implements Comparable<Movie> {
         this.director = director;
     }
 
-    public Movie(int id, String name, Coordinates coordinates,
-                 Long oscarsCount, Integer totalBoxOffice, MovieGenre genre, MpaaRating mpaaRating, Person director) {
-        this(id, name, coordinates, LocalDate.now(), oscarsCount, totalBoxOffice, genre, mpaaRating, director);
-    }
 
 
     public int getId() {

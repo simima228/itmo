@@ -164,7 +164,7 @@ public class ObjectRegister {
     private Integer createTotalBox(Console console) throws Break {
         return parseNumber(console, "Введите размер кассовых сборов (целое число больше нуля): ",
                 "Размер кассовых сборов не может быть пустым, введите корректное число: ",
-                "Кассовые сборы успешно добавлен!",
+                "Кассовые сборы успешно добавлены!",
                 Integer::parseInt, x -> x > 0,
                 "Число должно быть положительным, введите корректное число: ");
     }

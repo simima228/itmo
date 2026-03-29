@@ -6,12 +6,10 @@ import com.example.registers.CollectionRegister;
 
 
 public class Clear extends BaseCommand {
-    private final Console console;
     private final CollectionRegister collectionRegister;
 
-    public Clear(Console console, CollectionRegister collectionRegister) {
+    public Clear(CollectionRegister collectionRegister) {
         super("clear", "clear", "очистить коллекцию");
-        this.console = console;
         this.collectionRegister = collectionRegister;
     }
 

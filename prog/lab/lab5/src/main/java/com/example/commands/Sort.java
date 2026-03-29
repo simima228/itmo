@@ -5,12 +5,10 @@ import com.example.etc.CommandStatus;
 import com.example.registers.CollectionRegister;
 
 public class Sort extends BaseCommand {
-    private final Console console;
     private final CollectionRegister collectionRegister;
 
-    public Sort(Console console, CollectionRegister collectionRegister) {
+    public Sort(CollectionRegister collectionRegister) {
         super("sort", "sort", "отсортировать коллекцию в естественном порядке");
-        this.console = console;
         this.collectionRegister = collectionRegister;
     }
 

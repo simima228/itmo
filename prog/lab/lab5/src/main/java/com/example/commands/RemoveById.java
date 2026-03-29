@@ -5,12 +5,10 @@ import com.example.etc.CommandStatus;
 import com.example.registers.CollectionRegister;
 
 public class RemoveById extends BaseCommand {
-    private final Console console;
     private final CollectionRegister collectionRegister;
 
-    public RemoveById(Console console, CollectionRegister collectionRegister) {
+    public RemoveById(CollectionRegister collectionRegister) {
         super("remove_by_id","remove_by_id id", "удалить элемент из коллекции по его id");
-        this.console = console;
         this.collectionRegister = collectionRegister;
     }
 
