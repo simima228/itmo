@@ -1,0 +1,42 @@
+package etc;
+
+import commands.*;
+import core.CollectionRegister;
+import core.CommandRegister;
+import core.HistoryRegister;
+import io.FileRegister;
+
+
+public class InitCommandRegister {
+    private final CollectionRegister collectionRegister;
+    private final HistoryRegister historyRegister;
+    private final FileRegister fileRegister;
+    private final CommandRegister commandRegister;
+
+    public InitCommandRegister(CollectionRegister collectionRegister, HistoryRegister historyRegister,
+                               FileRegister fileRegister, CommandRegister commandRegister) {
+        this.collectionRegister = collectionRegister;
+        this.historyRegister = historyRegister;
+        this.fileRegister = fileRegister;
+        this.commandRegister = commandRegister;
+    }
+
+    public void initialize() {
+        commandRegister.register(new Help(commandRegister));
+        commandRegister.register(new Info(collectionRegister));
+        commandRegister.register(new Show(collectionRegister));
+        commandRegister.register(new Add(collectionRegister));
+        commandRegister.register(new UpdateId(collectionRegister));
+        commandRegister.register(new RemoveById(collectionRegister));
+        commandRegister.register(new Clear(collectionRegister));
+        commandRegister.register(new ExecuteScript(collectionRegister, fileRegister, commandRegister));
+        commandRegister.register(new Exit());
+        commandRegister.register(new InsertAt(collectionRegister));
+        commandRegister.register(new Sort(collectionRegister));
+        commandRegister.register(new History(historyRegister));
+        commandRegister.register(new AverageOfTotalBoxOffice(collectionRegister));
+        commandRegister.register(new CountGreaterThanOscarsCount(collectionRegister));
+        commandRegister.register(new PrintDescending(collectionRegister));
+        
+    }
+}
