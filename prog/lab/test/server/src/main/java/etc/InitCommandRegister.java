@@ -4,7 +4,6 @@ import commands.*;
 import core.CollectionRegister;
 import core.CommandRegister;
 import core.HistoryRegister;
-import io.FileRegister;
 
 
 public class InitCommandRegister {

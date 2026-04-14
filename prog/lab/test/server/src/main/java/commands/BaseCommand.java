@@ -29,6 +29,9 @@ abstract public class BaseCommand {
         return infoName;
     }
 
+    public DataClass getDataClass() {
+        return dataClass;
+    }
 
     public abstract Response execute(Object arguments);
 
