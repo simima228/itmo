@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DataFramer {
-    private Map<Integer, byte[]> frames = new HashMap<>();
+    private final Map<Integer, byte[]> frames = new HashMap<>();
 
     private static byte[] framing(long id, byte[] data, int frameSize, int totalFrames, int i) throws IOException {
         int bound = i * frameSize;
@@ -22,7 +22,7 @@ public class DataFramer {
     public void sendFramedSocket(DatagramSocket socket, InetAddress address, int port, long id, byte[] data, int frameSize) throws IOException {
         int totalFrames = (int) Math.ceil((double) data.length / frameSize);
         for (int i = 0; i < totalFrames; i++) {
-            byte[] sendFrame = framing(id, data, frameSize, totalFrames, i);;
+            byte[] sendFrame = framing(id, data, frameSize, totalFrames, i);
             DatagramPacket packet = new DatagramPacket(sendFrame, sendFrame.length, address, port);
             socket.send(packet);
         }

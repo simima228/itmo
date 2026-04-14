@@ -5,7 +5,6 @@ import model.Movie;
 import network.Response;
 import core.CollectionRegister;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class InsertAt extends BaseCommand {

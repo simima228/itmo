@@ -10,14 +10,12 @@ import io.FileRegister;
 public class InitCommandRegister {
     private final CollectionRegister collectionRegister;
     private final HistoryRegister historyRegister;
-    private final FileRegister fileRegister;
     private final CommandRegister commandRegister;
 
     public InitCommandRegister(CollectionRegister collectionRegister, HistoryRegister historyRegister,
-                               FileRegister fileRegister, CommandRegister commandRegister) {
+                               CommandRegister commandRegister) {
         this.collectionRegister = collectionRegister;
         this.historyRegister = historyRegister;
-        this.fileRegister = fileRegister;
         this.commandRegister = commandRegister;
     }
 
@@ -29,7 +27,7 @@ public class InitCommandRegister {
         commandRegister.register(new UpdateId(collectionRegister));
         commandRegister.register(new RemoveById(collectionRegister));
         commandRegister.register(new Clear(collectionRegister));
-        commandRegister.register(new ExecuteScript(collectionRegister, fileRegister, commandRegister));
+        commandRegister.register(new ExecuteScript());
         commandRegister.register(new Exit());
         commandRegister.register(new InsertAt(collectionRegister));
         commandRegister.register(new Sort(collectionRegister));

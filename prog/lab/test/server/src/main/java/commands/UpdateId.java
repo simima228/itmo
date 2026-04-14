@@ -5,9 +5,6 @@ import model.Movie;
 import network.Response;
 import core.CollectionRegister;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 public class UpdateId extends BaseCommand {

@@ -4,7 +4,6 @@ import etc.DataClass;
 import network.Response;
 import core.CommandRegister;
 
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Help extends BaseCommand {
@@ -18,8 +17,8 @@ public class Help extends BaseCommand {
 
     @Override
     public Response execute(Object arguments) {
-        String response = commandRegister.getCommands().entrySet().stream()
-                .map(entry -> entry.getValue().getInfoName() + ": " + entry.getValue().getDescription())
+        String response = commandRegister.getCommands().values().stream()
+                .map(baseCommand -> baseCommand.getInfoName() + ": " + baseCommand.getDescription())
                 .collect(Collectors.joining("\n"));
 
         return new Response(true, response.isEmpty() ? "Нет доступных команд" : response);

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Console implements ConsoleInterface {
-    ArrayList<Scanner> scanners = new ArrayList<>();
+    final ArrayList<Scanner> scanners = new ArrayList<>();
 
     @Override
     public void println(Object obj) {

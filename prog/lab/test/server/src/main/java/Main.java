@@ -4,11 +4,8 @@ import core.HistoryRegister;
 import etc.InitCommandRegister;
 import io.FileRegister;
 import network.UDPServer;
-
-import java.io.IOException;
-
 public class Main {
-    public static void main(String[] args) throws IOException, FileRegister.WrongFieldException, FileRegister.WrongNumberException, FileRegister.EmptyFileException {
+    public static void main(String[] args) {
         final String DATABASE = "database.csv";
         HistoryRegister historyRegister = new HistoryRegister();
         CommandRegister commandRegister = new CommandRegister(historyRegister);
@@ -16,7 +13,7 @@ public class Main {
         FileRegister fileRegister = new FileRegister();
         CollectionRegister collectionRegister = new CollectionRegister(fileRegister.readCsv(DATABASE));
         collectionRegister.setNewId();
-        new InitCommandRegister(collectionRegister, historyRegister,fileRegister, commandRegister).initialize();
+        new InitCommandRegister(collectionRegister, historyRegister,commandRegister).initialize();
         UDPServer udpServer = new UDPServer(commandRegister, fileRegister, collectionRegister, DATABASE);
         udpServer.run();
     }

@@ -10,8 +10,6 @@ import java.util.*;
 public class CommandInvoker {
     private final Map<String, DataClass> commands = new LinkedHashMap<>();
     private final Console console;
-    private final List intList = Arrays.asList("insert_at", "remove_by_id", "count_greater_than_oscars_count");
-    private final List movieList = Arrays.asList("add", "update_id");
     private final ObjectRegister objectRegister;
 
     public CommandInvoker(Console console, ObjectRegister objectRegister) {

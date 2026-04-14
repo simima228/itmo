@@ -4,8 +4,6 @@ package commands;
 import etc.DataClass;
 import network.Response;
 
-import java.io.Serializable;
-
 abstract public class BaseCommand {
     private final String name;
     private final String description;
@@ -31,9 +29,6 @@ abstract public class BaseCommand {
         return infoName;
     }
 
-    public DataClass getDataClass() {
-        return dataClass;
-    }
 
     public abstract Response execute(Object arguments);
 

@@ -1,7 +1,6 @@
 package commands;
 
 import etc.DataClass;
-import model.Movie;
 import network.Response;
 import core.CollectionRegister;
 

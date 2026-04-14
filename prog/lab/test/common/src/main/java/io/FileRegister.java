@@ -16,15 +16,8 @@ import java.util.function.Predicate;
 
 
 public class FileRegister {
-    int fieldCount;
-    List<Integer> ids = new ArrayList<>();
-
-    public static class WrongNumberException extends Exception {
-        @Override
-        public String getMessage() {
-            return "В файле неверное количество полей у объектов";
-        }
-    }
+    final int fieldCount;
+    final List<Integer> ids = new ArrayList<>();
 
     public static class WrongFieldException extends Exception {
         public WrongFieldException(String message) {
@@ -60,8 +53,7 @@ public class FileRegister {
         }
     }
 
-    public ArrayList<Movie> readCsv(String fileName) throws FileNotFoundException, WrongNumberException,
-            WrongFieldException, EmptyFileException {
+    public ArrayList<Movie> readCsv(String fileName) {
         Scanner scanner;
         ArrayList<String> fields = new ArrayList<>();
         try {
@@ -177,7 +169,7 @@ public class FileRegister {
                 throw new WrongFieldException("Повторяющийся id");
             }
             ids.add(id);
-            String movieName = parseString(data.get(1), "Указано пустое имя фильма");
+            String movieName = parseString(data.get(1));
             Coordinates coordinates = getCoordinates(data.get(2), data.get(3));
             LocalDate creationDate = getDate(data.get(4));
             Long osc = getOsc(data.get(5));
@@ -206,9 +198,9 @@ public class FileRegister {
         }
     }
 
-    private String parseString(String name, String error) throws WrongFieldException {
+    private String parseString(String name) throws WrongFieldException {
         if (name.isEmpty()){
-            throw new WrongFieldException(error);
+            throw new WrongFieldException("Указано пустое имя фильма");
         }
         return name;
     }
