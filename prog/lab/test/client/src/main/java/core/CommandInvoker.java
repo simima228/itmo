@@ -37,11 +37,10 @@ public class CommandInvoker {
         this.commands.put("execute_script", DataClass.SCRIPT);
     }
 
-    public Request invoke(String line){
+    public Request invoke(String line) throws Exception {
         String[] split = (line.trim() + " ").split(" ");
         if (split.length > 2){
-            console.println("Некорректная команда, попробуйте ещё раз.");
-            return new Request("error", "error");
+            throw new Exception("Некорректная команда, попробуйте ещё раз.");
         }
         if (commands.containsKey(split[0])){
             DataClass dataClass = commands.get(split[0]);
@@ -60,8 +59,7 @@ public class CommandInvoker {
 
                         }
                         catch (ObjectRegister.Break e) {
-                            console.println("Команда прервана.");
-                            return new Request("error", "error");
+                            throw new Exception("Команда прервана.");
                         }
                     case INT:
                         try {
@@ -69,8 +67,7 @@ public class CommandInvoker {
                             return new Request(split[0], id);
                         }
                         catch (NumberFormatException e) {
-                            console.println("ID должен быть целым числом.");
-                            return new Request("error", "error");
+                            throw new Exception("ID должен быть целым числом.");
                         }
                     case INT_MOV:
                         try {
@@ -78,21 +75,17 @@ public class CommandInvoker {
                             Movie movie = objectRegister.createMovie(console, id);
                             return new Request(split[0], Arrays.asList(movie, id));
                         } catch (ObjectRegister.Break e) {
-                            console.println("Команда прервана пользователем.");
-                            return new Request("error", "error");
+                            throw new Exception("Команда прервана пользователем.");
                         }
                          catch (NumberFormatException e) {
-                            console.println("ID должен быть целым числом.");
-                            return new Request("error", "error");
+                            throw new Exception("ID должен быть целым числом.");
                          }
 
                 }
             }
-            console.println("Некорректная команда, попробуйте еще раз.");
-            return new Request("error", "error");
+            throw new Exception("Некорректная команда, попробуйте еще раз.");
         }
-        console.println("Некорректная команда, попробуйте еще раз.");
-        return new Request("error", "error");
+        throw new Exception("Некорректная команда, попробуйте еще раз.");
     }
 
 }

@@ -1,23 +1,20 @@
 package console;
 
 import io.FileRegister;
-import network.Response;
 import network.UDPClient;
 import network.Request;
 import core.CommandInvoker;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
 
 public class Printer {
     private final Console console;
     private final UDPClient udpCLient;
     private final CommandInvoker commandInvoker;
     private final FileRegister fileRegister;
+    private final Set<String> activeScripts = new HashSet<>();
 
     public Printer(Console console, UDPClient udpClient, CommandInvoker commandInvoker, FileRegister fileRegister) {
         this.console = console;
@@ -38,14 +35,13 @@ public class Printer {
                     continue;
                 }
                 request = commandInvoker.invoke(line);
-                if (request.commandName().equals("error")){
-                    continue;
-                }
                 if (request.commandName().equals("exit")){
                     console.println("Завершение программы...");
                     break;
                 }
-                if (!request.commandName().equals("execute_script")){udpCLient.send(request);}
+                if (!request.commandName().equals("execute_script")) {
+                    udpCLient.send(request);
+                }
                 else {
                     String scriptName = (String) request.arguments();
                     console.println("Скрипт " + scriptName.trim() + " выполняется...");
@@ -64,7 +60,7 @@ public class Printer {
                 console.println("В скрипте недостаточно строк для заполнения полей или вы нажали ctrl+d!");
                 break;
             }
-            catch (FileRegister.EmptyFileException e){
+            catch (Exception e){
                 console.println(e.getMessage());
             }
 
@@ -72,6 +68,14 @@ public class Printer {
         }
     private void scriptExecute(String args, boolean script) throws FileNotFoundException,
             FileRegister.EmptyFileException {
+        if (activeScripts.contains(args)){
+            console.println("Обнаружено зацикливание скриптов!");
+            return;
+        }
+        if (activeScripts.size() > 100){
+            console.println("Превышена максимальная глубина вложенности скриптов!");
+            return;
+        }
         if (!script){
             if (!checkRecursion(fileRegister.readScript(args))){
                 return;
@@ -88,8 +92,10 @@ public class Printer {
                     " считывание информации невозможно!");
         }
         try {
+            activeScripts.add(args);
             run(true);
             console.removeScanner();
+            activeScripts.remove(args);
         }
         catch (NoSuchElementException | IOException | ClassNotFoundException e) {
             console.println("Во время выполнения скрипта произошла ошибка.");
@@ -103,7 +109,6 @@ public class Printer {
                 console.println("В скрипте обнаружена рекурсия, выполнение невозможно.");
                 return false;
             }
-            return true;
         }
         return true;
     }
