@@ -50,10 +50,10 @@ public class DataFramer {
                     return null;
                 }
                 Frame frame = (Frame) DataConverter.deserialize(packet.getData());
-                if (frame.getId() != expectedId){ continue;}
-                frames.put(frame.getFrameIndex(), frame.getData());
-                if (totalFrames == -1){
-                    totalFrames = frame.getTotalFrames();}
+                if (frame.id() != expectedId) { continue;}
+                frames.put(frame.frameIndex(), frame.data());
+                if (totalFrames == -1) {
+                    totalFrames = frame.totalFrames();}
                 if (frames.size() == totalFrames) {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     for (int i = 0; i < totalFrames; i++) baos.write(frames.get(i));

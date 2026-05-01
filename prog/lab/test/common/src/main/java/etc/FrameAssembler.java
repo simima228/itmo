@@ -9,6 +9,29 @@ public class FrameAssembler {
         byte[][] frames;
         int receivedCount;
         long lastUpdate;
+
+        synchronized void addFrame(int index, byte[] data) {
+            if (frames[index] == null) {
+                frames[index] = data;
+                receivedCount++;
+            }
+        }
+
+        synchronized boolean isComplete() {
+            return receivedCount == frames.length;
+        }
+
+        synchronized byte[] assemble() {
+            int totalSize = 0;
+            for (byte[] fram : frames) totalSize += fram.length;
+            byte[] full = new byte[totalSize];
+            int bound = 0;
+            for (byte[] fram : frames) {
+                System.arraycopy(fram, 0, full, bound, fram.length);
+                bound += fram.length;
+            }
+            return full;
+        }
     }
 
     private final Map<SocketAddress, Map<Long, State>> clients = new ConcurrentHashMap<>();
@@ -20,36 +43,30 @@ public class FrameAssembler {
 
     public byte[] addFrame(Frame frame, SocketAddress address) {
         cleanFrames();
-        Map<Long, State> client = clients.computeIfAbsent(address, k -> new ConcurrentHashMap<>());
-        State state = client.get(frame.getId());
-        if (state == null) {
-            state = new State();
-            state.frames = new byte[frame.getTotalFrames()][];
-            state.receivedCount = 0;
-            client.put(frame.getId(), state);
-        }
+
+        Map<Long, State> client = clients.computeIfAbsent(address,
+                k -> new ConcurrentHashMap<>());
+
+        State state = client.computeIfAbsent(frame.id(), k -> {
+            State s = new State();
+            s.frames = new byte[frame.totalFrames()][];
+            s.receivedCount = 0;
+            return s;
+        });
+
         state.lastUpdate = System.currentTimeMillis();
-        if (state.frames[frame.getFrameIndex()] == null) {
-            state.frames[frame.getFrameIndex()] = frame.getData();
-            state.receivedCount++;
-            clients.put(address, client);
-        }
-        if (state.receivedCount == state.frames.length) {
-            int totalSize = 0;
-            for (byte[] fram : state.frames) totalSize += fram.length;
-            byte[] full = new byte[totalSize];
-            int bound = 0;
-            for (byte[] fram : state.frames) {
-                System.arraycopy(fram, 0, full, bound, fram.length);
-                bound += fram.length;
-            }
-            client.remove(frame.getId());
-            if (client.isEmpty())
-            {
+
+        state.addFrame(frame.frameIndex(), frame.data());
+
+        if (state.isComplete()) {
+            byte[] full = state.assemble();
+            client.remove(frame.id());
+            if (client.isEmpty()) {
                 clients.remove(address);
             }
             return full;
         }
+
         return null;
     }
 
@@ -57,8 +74,8 @@ public class FrameAssembler {
         long now = System.currentTimeMillis();
         for (Map.Entry<SocketAddress, Map<Long, State>> entry : clients.entrySet()) {
             Map<Long, State> client = entry.getValue();
-            client.entrySet().removeIf(e -> now - e.getValue().lastUpdate > timeout);
-            if (client.isEmpty()){
+            client.entrySet().removeIf(e -> (now - e.getValue().lastUpdate > timeout));
+            if (client.isEmpty()) {
                 clients.remove(entry.getKey());
             }
         }

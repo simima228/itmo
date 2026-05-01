@@ -1,20 +1,19 @@
 package commands;
 
 
-import etc.DataClass;
 import network.Response;
+
+import java.sql.SQLException;
 
 abstract public class BaseCommand {
     private final String name;
     private final String description;
     private final String infoName;
-    private final DataClass dataClass;
 
-    public BaseCommand(String name, String infoName, String description, DataClass dataClass) {
+    public BaseCommand(String name, String infoName, String description) {
         this.name = name;
         this.description = description;
         this.infoName = infoName;
-        this.dataClass = dataClass;
     }
 
     public String getName() {
@@ -29,10 +28,16 @@ abstract public class BaseCommand {
         return infoName;
     }
 
-    public DataClass getDataClass() {
-        return dataClass;
-    }
+    public abstract Response execute(Object arguments, String login, String password) throws SQLException;
 
-    public abstract Response execute(Object arguments);
+    public String checkUser(int id) {
+        if (id == -1) {
+            return "Введенный пользователь не существует!";
+        }
+        if (id == -2) {
+            return "Неверный пароль!";
+        }
+        return "ok";
+    }
 
 }

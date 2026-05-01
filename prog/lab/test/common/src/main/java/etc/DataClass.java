@@ -5,7 +5,7 @@ public enum DataClass {
     INT,
     MOV,
     INT_MOV,
-    SCRIPT
-
+    SCRIPT,
+    STRING
 
 }

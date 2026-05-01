@@ -4,7 +4,8 @@ import enums.Country;
 
 import java.io.Serializable;
 
-public class Person implements Serializable {
+public class
+Person implements Serializable {
     private final String name; //Поле не может быть null, Строка не может быть пустой
     private final int height; //Значение поля должно быть больше 0
     private final Country nationality; //Поле не может быть null
@@ -27,8 +28,8 @@ public class Person implements Serializable {
     public Country getNationality() {
         return nationality;
     }
-    public String getLocation() {
-        return location.getX() + "," + location.getY() + "," + location.getZ();
+    public Location getLocationAsLocation() {
+        return location;
     }
 
     @Override

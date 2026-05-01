@@ -16,9 +16,11 @@ public class Movie implements Comparable<Movie>, Serializable {
     private final MovieGenre genre; //Поле может быть null
     private final MpaaRating mpaaRating; //Поле может быть null
     private final Person director; //Поле может быть null
+    private final String owner;
 
     public Movie(int id, String name, Coordinates coordinates, LocalDate creationDate,
-                 Long oscarsCount, Integer totalBoxOffice, MovieGenre genre, MpaaRating mpaaRating, Person director) {
+                 Long oscarsCount, Integer totalBoxOffice, MovieGenre genre, MpaaRating mpaaRating, Person director,
+                 String owner) {
         this.id = id;
         this.name = name;
         this.coordinates = coordinates;
@@ -28,6 +30,7 @@ public class Movie implements Comparable<Movie>, Serializable {
         this.genre = genre;
         this.mpaaRating = mpaaRating;
         this.director = director;
+        this.owner = owner;
     }
 
 
@@ -46,10 +49,6 @@ public class Movie implements Comparable<Movie>, Serializable {
 
     public Coordinates getCoordinates() {
         return coordinates;
-    }
-
-    public LocalDate getCreationDate() {
-        return creationDate;
     }
 
     public Long getOscarsCount() {
@@ -72,8 +71,12 @@ public class Movie implements Comparable<Movie>, Serializable {
         return director;
     }
 
+    public String getOwner() {
+        return owner;
+    }
+
     @Override
-    public String toString(){
+    public String toString() {
         return "Фильм" + ": " + "[" +
                 "id" + ": " + id +
                 ", " + "name" + ": " + name +
@@ -83,7 +86,8 @@ public class Movie implements Comparable<Movie>, Serializable {
                 ", " + "Кассовые сборы" + ": " + totalBoxOffice +
                 ", " + "Жанр" + ": " + (genre == null ? "Отсутствует": genre) +
                 ", " + "Рейтинг MPAA" + ": " + (mpaaRating == null ? "Отсутствует": mpaaRating) +
-                ", " + "Режиссер" + ": " + (director == null ? "Отсутствует": director) + "]";
+                ", " + "Режиссер" + ": " + (director == null ? "Отсутствует": director) +
+                ", " + "Владелец" + ": " + owner + "]";
     }
 
     @Override

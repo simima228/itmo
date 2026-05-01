@@ -20,7 +20,7 @@ public class ObjectRegister {
         }
     }
 
-    public Movie createMovie(Console console, int id) throws Break {
+    public Movie createMovie(Console console, int id, String login) throws Break {
         String line;
         String name;
         Coordinates coordinates;
@@ -45,7 +45,7 @@ public class ObjectRegister {
             director = null;
         }
         return new Movie(id, name, coordinates, LocalDate.now(), oscars, totalBox, genre,
-                rating, director);
+                rating, director, login);
     }
 
 
@@ -56,7 +56,7 @@ public class ObjectRegister {
         if (line.equalsIgnoreCase("/exit")) {
             throw new Break();
         }
-        if (line.isEmpty()){
+        if (line.isEmpty()) {
             return null;
         }
         return line;
@@ -98,7 +98,7 @@ public class ObjectRegister {
         console.println(request);
         while (console.getScanner().hasNextLine()) {
             line = parseField(console);
-            if (line == null){
+            if (line == null) {
                 console.println(emptyError);
                 continue;
             }
@@ -116,14 +116,14 @@ public class ObjectRegister {
         console.println(request);
         while (console.getScanner().hasNextLine()) {
             line = parseField(console);
-            if (line == null){
+            if (line == null) {
                 console.println(emptyError);
                 continue;
             }
             try {
                 number = parser.apply(line.replace(",", "."));
-                if (validator != null){
-                    if (!validator.test(number)){
+                if (validator != null) {
+                    if (!validator.test(number)) {
                         console.println(validationError);
                         continue;
                     }

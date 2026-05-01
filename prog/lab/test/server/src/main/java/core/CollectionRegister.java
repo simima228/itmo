@@ -7,62 +7,59 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Stack;
 import java.util.stream.Collectors;
+import java.util.concurrent.locks.*;
 
 public class CollectionRegister {
     private final LocalDate initialDate;
     private LocalDate changeDate;
     private final Stack<Movie> stack;
-    private int id;
+
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Lock readLock = lock.readLock();
+    private final Lock writeLock = lock.writeLock();
 
     public CollectionRegister(ArrayList<Movie> movies) {
         this.initialDate = LocalDate.now();
         this.changeDate = null;
         this.stack = movies.stream()
                 .collect(Collectors.toCollection(Stack::new));
-        setNewId();
     }
 
     public Stack<Movie> getStack() {
-        return stack;
-    }
-
-    public void setNewStack(Stack<Movie> stack) {
-        this.stack.clear();
-        this.stack.addAll(stack);
-        setChangeDate(LocalDate.now());
-    }
-
-    public void setNewId() {
-        this.id = stack.stream()
-                .mapToInt(Movie::getId)
-                .max()
-                .orElse(0);
-    }
-
-    public int getNewId() {
-        return ++id;
-    }
-
-    public void reduceId() {
-        id--;
+        readLock.lock();
+        try {
+            return new Stack<>() {{ addAll(stack); }};
+        } finally {
+            readLock.unlock();
+        }
     }
 
     public void push(Movie movie) {
-        stack.push(movie);
-        setChangeDate(LocalDate.now());
-    }
-
-    @Override
-    public String toString() {
-        return stack.getClass().toString();
+        writeLock.lock();
+        try {
+            stack.push(movie);
+            setChangeDate(LocalDate.now());
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     public LocalDate getInitialDate() {
-        return initialDate;
+        readLock.lock();
+        try {
+            return initialDate;
+        } finally {
+            readLock.unlock();
+        }
     }
 
     public LocalDate getChangeDate() {
-        return changeDate;
+        readLock.lock();
+        try {
+            return changeDate;
+        } finally {
+            readLock.unlock();
+        }
     }
 
     public void setChangeDate(LocalDate changeDate) {
@@ -70,50 +67,101 @@ public class CollectionRegister {
     }
 
     public String getInformation(Stack<Movie> stack) {
-        if (stack.isEmpty()) {
-            return "В коллекции нет элементов!";
+        readLock.lock();
+        try {
+            if (stack.isEmpty()) {
+                return "В коллекции нет элементов!";
+            }
+            return stack.stream()
+                    .map(Movie::toString)
+                    .collect(Collectors.joining("\n"));
+        } finally {
+            readLock.unlock();
         }
+    }
 
-        return stack.stream()
-                .map(Movie::toString)
-                .collect(Collectors.joining("\n"));
+    public void add(int index, Movie movie) {
+        writeLock.lock();
+        try {
+            stack.add(index, movie);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     public void setStack(int index, Movie movie) {
-        stack.add(index, movie);
-        setChangeDate(LocalDate.now());
+        writeLock.lock();
+        try {
+            stack.set(index, movie);
+            setChangeDate(LocalDate.now());
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     public void delete(int index) {
-        stack.remove(index);
-        setChangeDate(LocalDate.now());
+        writeLock.lock();
+        try {
+            stack.remove(index);
+            setChangeDate(LocalDate.now());
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     public int getIndex(int id) {
-        return stack.stream()
-                .filter(movie -> movie.getId() == id)
-                .map(stack::indexOf)
-                .findFirst()
-                .orElse(-1);
+        readLock.lock();
+        System.out.println(stack.size());
+        System.out.println(stack);
+        try {
+            for (int i = 0; i < stack.size(); i++) {
+                if (stack.get(i).getId() == id) {
+                    return i;
+                }
+            }
+            return -1;
+        } finally {
+            readLock.unlock();
+        }
     }
 
     public int getLength() {
-        return stack.size();
+        readLock.lock();
+        try {
+            return stack.size();
+        } finally {
+            readLock.unlock();
+        }
     }
 
-    public void clear() {
-        stack.clear();
-        setChangeDate(LocalDate.now());
+    public void clear(String owner) {
+        writeLock.lock();
+        try {
+            stack.removeIf(movie -> movie.getOwner().equals(owner));
+            setChangeDate(LocalDate.now());
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     public void sort() {
-        stack.sort(Comparator.naturalOrder());
-        setChangeDate(LocalDate.now());
+        writeLock.lock();
+        try {
+            stack.sort(Comparator.naturalOrder());
+            setChangeDate(LocalDate.now());
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     public Stack<Movie> reverseSort() {
-        return stack.stream()
-                .sorted(Comparator.reverseOrder())
-                .collect(Collectors.toCollection(Stack::new));
+        readLock.lock();
+        try {
+            return stack.stream()
+                    .sorted(Comparator.reverseOrder())
+                    .collect(Collectors.toCollection(Stack::new));
+        } finally {
+            readLock.unlock();
+        }
     }
 }

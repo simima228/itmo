@@ -4,10 +4,8 @@ import etc.DataConverter;
 import etc.DataFramer;
 import etc.Frame;
 import etc.FrameAssembler;
-import core.CollectionRegister;
 import core.CommandRegister;
 import etc.Log;
-import io.FileRegister;
 
 import java.io.IOException;
 import java.net.*;
@@ -16,24 +14,21 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.Iterator;
+import java.util.concurrent.*;
 
 public class UDPServer {
     private static final int SERVER_PORT = 8888;
     private static final int BUFFER_SIZE = 2048;
     private final CommandRegister commandRegister;
-    private final FileRegister fileRegister;
-    private final CollectionRegister collectionRegister;
     private volatile boolean running = true;
     private final FrameAssembler assembler = new FrameAssembler(10000);
     private final DataFramer framer = new DataFramer();
-    private final String fileName;
 
-    public UDPServer(CommandRegister commandRegister, FileRegister fileRegister,
-                     CollectionRegister collectionRegister, String fileName) {
+    private final ExecutorService readPool = Executors.newCachedThreadPool();
+    private final ExecutorService writePool = Executors.newFixedThreadPool(4);
+
+    public UDPServer(CommandRegister commandRegister) {
         this.commandRegister = commandRegister;
-        this.fileRegister = fileRegister;
-        this.collectionRegister = collectionRegister;
-        this.fileName = fileName;
     }
 
     public void run() {
@@ -47,7 +42,7 @@ public class UDPServer {
 
             Selector selector = Selector.open();
             channel.register(selector, SelectionKey.OP_READ);
-            Log.info("UDP сервер запущен на порту " + SERVER_PORT);
+            Log.info("UDP сервер запущен на порту: " + SERVER_PORT);
 
             ByteBuffer buffer = ByteBuffer.allocate(65535);
 
@@ -71,24 +66,38 @@ public class UDPServer {
 
                     byte[] bytes = new byte[buffer.remaining()];
                     buffer.get(bytes);
-                    try {
-                        Frame frame = (Frame) DataConverter.deserialize(bytes);
-                        byte[] data = assembler.addFrame(frame, address);
-                        if (data == null) {
-                            continue;
+
+                    final SocketAddress finalAddress = address;
+                    new Thread(() -> {
+                        try {
+                            Frame frame = (Frame) DataConverter.deserialize(bytes);
+                            byte[] data = assembler.addFrame(frame, finalAddress);
+                            if (data == null) {
+                                return;
+                            }
+                            Request request = (Request) DataConverter.deserialize(data);
+                            Log.info("Получен запрос: " + request.commandName() + " от " + finalAddress);
+
+                            Response response = commandRegister.executor(request);
+
+                            if (!response.success()) {
+                                Log.warn(response.message());
+                            }
+                            byte[] responseBytes = DataConverter.serialize(response);
+                            long frameId = frame.id();
+                            writePool.submit(() -> {
+                                try {
+                                    framer.sendFramedChannel(channel, finalAddress, frameId, responseBytes, BUFFER_SIZE);
+                                    Log.info("Отправлен ответ: " + response.message());
+                                } catch (IOException e) {
+                                    Log.error("Ошибка отправки: " + e.getMessage());
+                                }
+                            });
+
+                        } catch (Exception e) {
+                            Log.error(e.getMessage());
                         }
-                        Request request = (Request) DataConverter.deserialize(data);
-                        Log.info("Получен запрос: " + request + " от " + address);
-                        Response response = commandRegister.executor(request);
-                        if (!response.success()) {
-                            Log.warn(response.message());
-                        }
-                        byte[] message = DataConverter.serialize(response);
-                        framer.sendFramedChannel(channel, address, frame.getId(), message, BUFFER_SIZE);
-                        Log.info("Отправлен ответ: " + response.message());
-                    } catch (Exception e) {
-                        Log.error(e.getMessage());
-                    }
+                    }).start();
                 }
             }
             try {
@@ -98,18 +107,16 @@ public class UDPServer {
             }
         } catch (Exception e) {
             Log.error(e.getMessage());
+        } finally {
+            readPool.shutdown();
+            writePool.shutdown();
         }
-    }
-
-    void save() throws IOException {
-        Log.info("Сохранение коллекции...");
-        fileRegister.writeCsv(collectionRegister.getStack(), fileName);
-        Log.info("Коллекция успешно сохранена!");
     }
 
     void exit() throws IOException {
         running = false;
-        save();
+        readPool.shutdownNow();
+        writePool.shutdownNow();
         Log.info("Закрытие сервера...");
     }
 }

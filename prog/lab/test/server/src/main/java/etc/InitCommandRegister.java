@@ -34,6 +34,8 @@ public class InitCommandRegister {
         commandRegister.register(new AverageOfTotalBoxOffice(collectionRegister));
         commandRegister.register(new CountGreaterThanOscarsCount(collectionRegister));
         commandRegister.register(new PrintDescending(collectionRegister));
+        commandRegister.register(new Register());
+        commandRegister.register(new Login());
         
     }
 }

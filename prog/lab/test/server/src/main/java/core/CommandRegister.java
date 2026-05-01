@@ -4,6 +4,7 @@ import network.Request;
 import network.Response;
 import commands.BaseCommand;
 
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,14 +25,14 @@ public class CommandRegister {
         return commands;
     }
 
-    public Response executor(Request request) {
+    public Response executor(Request request) throws SQLException {
         BaseCommand command = commands.get(request.commandName());
         if (command == null) {
             return new Response(false, "Неизвестная команда");
         }
-        Response response =  command.execute(request.arguments());
-        if (response.success()){
-            historyRegister.addHistory(command.getName());
+        Response response =  command.execute(request.arguments(), request.login(), request.password());
+        if (response.success() && request.login() != null) {
+            historyRegister.addHistory(command.getName(), request.login());
         }
         return response;
     }

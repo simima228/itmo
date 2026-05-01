@@ -8,15 +8,15 @@ import network.UDPClient;
 import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException {
         Console console = new Console();
         console.initializeScanner();
-        ObjectRegister objectRegister = new ObjectRegister();
-        CommandInvoker commandInvoker = new CommandInvoker(console, objectRegister);
-        commandInvoker.initialize();
         UDPClient udpClient = new UDPClient(console);
+        ObjectRegister objectRegister = new ObjectRegister();
+        CommandInvoker commandInvoker = new CommandInvoker(console, objectRegister, udpClient);
+        commandInvoker.initialize();
         FileRegister fileRegister = new FileRegister();
-        Printer printer = new Printer(console, udpClient, commandInvoker, fileRegister);
-        printer.run(false);
+        Printer printer = new Printer(console, commandInvoker, fileRegister);
+        printer.run();
     }
 }

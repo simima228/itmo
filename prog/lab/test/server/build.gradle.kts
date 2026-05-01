@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":common"))
     implementation("org.apache.logging.log4j:log4j-core:2.25.4")
     implementation("org.apache.logging.log4j:log4j-api:2.25.3")
+    implementation("org.postgresql:postgresql:42.7.1")
 }
 
 tasks.shadowJar {
@@ -23,6 +24,12 @@ tasks.shadowJar {
 
 tasks.jar {
     enabled = false
+}
+
+tasks.register<JavaExec>("runServer") {
+    mainClass.set("Main")
+    classpath = sourceSets.main.get().runtimeClasspath
+    group = "application"
 }
 
 tasks.named<JavaExec>("run") {

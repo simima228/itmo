@@ -12,7 +12,7 @@ public class UDPClient {
     private static final String SERVER_HOST = "localhost";
     private static final int SERVER_PORT = 8888;
     private static final int BUFFER_SIZE = 2048;
-    private static final int TIMEOUT = 100;
+    private static final int TIMEOUT = 10000;
     private static final int RETRIES = 1000;
     private final Console console;
     private final DatagramSocket socket;
@@ -26,7 +26,7 @@ public class UDPClient {
         this.serverAddress = InetAddress.getByName(SERVER_HOST);
     }
 
-    public void send(Request request) throws IOException, ClassNotFoundException {
+    public Response send(Request request) throws IOException, ClassNotFoundException {
         long id = System.currentTimeMillis();
         byte[] data = DataConverter.serialize(request);
         boolean received = false;
@@ -36,22 +36,25 @@ public class UDPClient {
             framer.sendFramedSocket(socket, serverAddress, SERVER_PORT, id, data, BUFFER_SIZE);
             try {
                 receivedData = framer.receiveFramed(socket, id, TIMEOUT);
-                if (receivedData == null) {console.println("Сервер не отвечает, попытка отправки " + (i + 1) + "."); continue;}
+                if (receivedData == null) {
+                    if ((i + 1) % 100 == 0) {
+                    console.println("Сервер не отвечает, попытка отправки " + ((i + 1) / 100) + ".");
+                    }
+                    continue;
+                }
                 received = true;
             }
             catch (SocketTimeoutException e) {
-                console.println("Сервер не отвечает, попытка отправки " + (i + 1) + ".");
+                if ((i + 1) % 100 == 0) {
+                    console.println("Сервер не отвечает, попытка отправки " + ((i + 1) / 100) + ".");
+                }
             }
         }
         if (!received) {
-            console.println("Сервер недоступен, попробуйте ещё раз.");
+            return new Response(false, "Сервер недоступен, попробуйте ещё раз.");
         }
         else {
-            Response response = (Response) DataConverter.deserialize(receivedData);
-            if (!response.success()) {
-                console.println("Не удалось выполнить команду.");
-            }
-            console.println(response.message());
+            return (Response) DataConverter.deserialize(receivedData);
         }
     }
 }

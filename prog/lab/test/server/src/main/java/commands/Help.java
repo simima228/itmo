@@ -1,6 +1,5 @@
 package commands;
 
-import etc.DataClass;
 import network.Response;
 import core.CommandRegister;
 
@@ -10,13 +9,13 @@ public class Help extends BaseCommand {
     private final CommandRegister commandRegister;
 
     public Help(CommandRegister commandRegister) {
-        super("help", "help", "вывести справку по доступным командам", DataClass.NONE);
+        super("help", "help", "вывести справку по доступным командам");
         this.commandRegister = commandRegister;
     }
 
 
     @Override
-    public Response execute(Object arguments) {
+    public Response execute(Object arguments, String login, String password) {
         String response = commandRegister.getCommands().values().stream()
                 .map(baseCommand -> baseCommand.getInfoName() + ": " + baseCommand.getDescription())
                 .collect(Collectors.joining("\n"));
