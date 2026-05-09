@@ -19,7 +19,11 @@ public class Help extends BaseCommand {
         String response = commandRegister.getCommands().values().stream()
                 .map(baseCommand -> baseCommand.getInfoName() + ": " + baseCommand.getDescription())
                 .collect(Collectors.joining("\n"));
-
+//        try {
+//            Thread.sleep(50000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
         return new Response(true, response.isEmpty() ? "Нет доступных команд" : response);
     }
 }
